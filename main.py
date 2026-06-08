@@ -16,6 +16,13 @@ import json
 import os
 import sys
 
+# Load .env before any agent imports so API keys are available
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
+
 from agents.detector.detector import DetectorAgent, Alert, DEMO_SCENARIOS
 from agents.triage.triage_agent import TriageAgent
 from agents.cost_impact.cost_agent import CostImpactAgent
