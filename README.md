@@ -209,19 +209,6 @@ This lets engineers make informed decisions: is patching now cheaper than invest
 
 ---
 
-## Reuse from NeuroScale Platform
-
-This project builds on battle-tested code from 3 prior NeuroScale hackathon projects:
-
-| Source | Reused Component | Adaptation |
-|--------|-----------------|------------|
-| [neuroscale-autopilot](https://github.com/sodiq-code/neuroscale-autopilot) | `detector.py` Alert model, CircuitBreaker | Extended for 8 alert types |
-| [neuroscale-autopilot](https://github.com/sodiq-code/neuroscale-autopilot) | `executor.py` kubectl/ArgoCD patterns | Refactored into RemediationAgent |
-| [neuroscale-agents-v2](https://github.com/sodiq-code/neuroscale-agents-v2) | `diagnostician.py` triage pipeline | Gemini → GPT-4o-mini |
-| [neuroscale-ops-agent](https://github.com/sodiq-code/neuroscale-ops-agent) | `kubernetes_ops.py` k8s tooling | Preserved + extended |
-
----
-
 ## Demo Scenarios
 
 | Scenario | Alert | Expected Action |
