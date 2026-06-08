@@ -7,7 +7,10 @@
 [![Python 3.11+](https://img.shields.io/badge/Python-3.11+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
 [![Groq llama-3.3-70b](https://img.shields.io/badge/LLM-Groq%20llama--3.3--70b-F55036?style=for-the-badge)](https://groq.com)
 [![Kubernetes](https://img.shields.io/badge/Kubernetes-v1.29-326CE5?style=for-the-badge&logo=kubernetes&logoColor=white)](https://kubernetes.io)
+[![17/17 Tests Passing](https://img.shields.io/badge/Tests-17%2F17%20Passing-brightgreen?style=for-the-badge&logo=pytest)](tests/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
+
+> **Demo Video (5m 09s) →** [`demo_assets/neurascale_ops_demo.mp4`](demo_assets/neurascale_ops_demo.mp4)
 
 ---
 
@@ -35,6 +38,66 @@ Prometheus Alert → Maestro Case Created
 ```
 
 **Mean time to remediation: under 15 minutes, fully audited, zero alert fatigue.**
+
+---
+
+## Demo Screenshots
+
+> All screenshots extracted directly from the live demo video. Real Groq AI output, real pipeline execution — no mocks.
+
+### The Problem NeuroScale Ops Solves
+
+![Problem statement and solution overview](demo_assets/screenshots/01_title_hook.png)
+
+> **3AM OOMKill cascade** — MTTR of 74 minutes, 3 engineers paged, 23 manual steps. NeuroScale Ops compresses this to `< 15 min` with **1 human touch point**: the approval tap.
+
+---
+
+### 7-Stage Maestro Case Architecture
+
+![7-stage Maestro Case architecture with full tech stack and incident coverage table](demo_assets/screenshots/02_architecture.png)
+
+> Every stage maps 1:1 to a **UiPath Maestro Case stage** with defined SLAs, input/output data contracts, and escalation paths. The full tech stack — Groq, OpenCost, ArgoCD, Kyverno, UiPath Apps — visible at a glance alongside the 5 incident runbooks.
+
+---
+
+### Live Pipeline — OOMKill CRITICAL Incident
+
+![Live python main.py execution: Groq AI triage, cost analysis, human approval gate, ArgoCD remediation, post-mortem](demo_assets/screenshots/03_oomkill_triage.png)
+
+> **`python main.py` running live.** Groq `llama-3.3-70b` identifies root cause `OOMKILL` with `HIGH` confidence in under 2 seconds, recommends `patch_resources` against runbook `RB-001`, calculates `$+15.00/mo` cost delta via OpenCost, routes to UiPath Maestro for SRE approval, executes `kubectl patch`, and closes with a resolved post-mortem — all 7 stages in one terminal session.
+
+---
+
+### All 5 Incident Types — Every Scenario Resolved
+
+![All 5 scenarios results table: OOMKill, CrashLoop, Policy Violation, Cost Spike, Deployment Failure — all RESOLVED](demo_assets/screenshots/05_all_scenarios.png)
+
+> **`python main.py --scenario all`** — OOMKill, CrashLoop, Policy Violation, Cost Spike, Deployment Failure. Groq AI adapts its reasoning for each incident type. All 5 resolved. AI confidence `HIGH` across the board. Net cost savings: **-$120/mo** from the scale-down remediation alone.
+
+---
+
+### Test Suite — 17/17 Passing
+
+![pytest output: 17/17 tests passing in 0.63s across all pipeline stages](demo_assets/screenshots/06_pytest_passing.png)
+
+> **`python -m pytest tests/test_pipeline.py -v`** — 17 tests, 0 failures, 0.63s. Every pipeline stage independently tested: detector, triage (rule-based + LLM), cost serialization, all remediation action types, notification payloads, and full end-to-end pipeline for OOMKill, CrashLoop, and Cost Spike scenarios.
+
+---
+
+### UiPath Maestro Case Definition
+
+![Maestro Case definition: 7 stages, SLAs, human-in-loop gates, UiPath components, MTTR comparison](demo_assets/screenshots/07_maestro_case.png)
+
+> **`uipath/maestro_case/case_definition.json`** — ready to import into UiPath Maestro. Human-in-loop gates at Stage 4 (SRE approval) and Stage 6 (resolution sign-off). 15-minute SLA on approval with auto-escalate. Full audit trail every stage. MTTR: **74 min → <15 min**.
+
+---
+
+### Impact Summary
+
+![NeuroScale Ops impact: MTTR 74m → <15m, SRE involvement 1 tap, cost visibility per incident, 100% audit trail](demo_assets/screenshots/08_impact_close.png)
+
+> **The business case:** MTTR cut by 80%. SRE active involvement reduced to a single approval tap. Every incident carries a `$/incident` cost figure from OpenCost. Full audit trail across 100% of Maestro stages — a compliance artifact, not just a log.
 
 ---
 
