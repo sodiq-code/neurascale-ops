@@ -1,0 +1,217 @@
+{
+  "$schema": "https://schemas.uipath.com/apps/v1",
+  "name": "NeuroScale Ops — Triage Approval Form",
+  "description": "Human-in-the-loop approval form for Maestro Case Stage 4. Shows AI triage results, cost impact analysis, and AI reasoning. Engineer approves or rejects the proposed remediation.",
+  "version": "1.0.0",
+  "type": "approval_form",
+  "theme": "dark",
+  "layout": {
+    "columns": 2,
+    "sections": [
+      {
+        "id": "incident_header",
+        "title": "Incident Summary",
+        "columns": 2,
+        "fields": [
+          {
+            "id": "alert_id",
+            "type": "text_display",
+            "label": "Alert ID",
+            "source": "triage_report.alert_id",
+            "style": "badge",
+            "badge_color": "red"
+          },
+          {
+            "id": "severity",
+            "type": "text_display",
+            "label": "Severity",
+            "source": "triage_report.severity",
+            "style": "badge",
+            "badge_color_map": {
+              "critical": "red",
+              "warning": "amber",
+              "info": "green"
+            }
+          },
+          {
+            "id": "root_cause_type",
+            "type": "text_display",
+            "label": "Root Cause",
+            "source": "triage_report.root_cause_type",
+            "style": "heading",
+            "columns_span": 2
+          },
+          {
+            "id": "description",
+            "type": "text_display",
+            "label": "Description",
+            "source": "triage_report.description",
+            "columns_span": 2
+          }
+        ]
+      },
+      {
+        "id": "ai_analysis",
+        "title": "AI Analysis (GPT-4o-mini)",
+        "columns": 2,
+        "fields": [
+          {
+            "id": "confidence",
+            "type": "text_display",
+            "label": "Confidence",
+            "source": "triage_report.confidence",
+            "style": "badge"
+          },
+          {
+            "id": "runbook_ref",
+            "type": "text_display",
+            "label": "Runbook",
+            "source": "triage_report.runbook_ref"
+          },
+          {
+            "id": "ai_reasoning",
+            "type": "text_area_display",
+            "label": "AI Reasoning",
+            "source": "triage_report.ai_reasoning",
+            "columns_span": 2,
+            "style": "highlight"
+          },
+          {
+            "id": "recommended_action",
+            "type": "text_display",
+            "label": "Recommended Action",
+            "source": "triage_report.recommended_action",
+            "style": "badge",
+            "badge_color": "blue",
+            "columns_span": 2
+          }
+        ]
+      },
+      {
+        "id": "cost_impact",
+        "title": "Cost Impact (OpenCost)",
+        "columns": 3,
+        "fields": [
+          {
+            "id": "current_hourly_cost",
+            "type": "metric_display",
+            "label": "Current Hourly Cost",
+            "source": "cost_report.current_hourly_cost_usd",
+            "format": "currency",
+            "currency_symbol": "$",
+            "suffix": "/hr"
+          },
+          {
+            "id": "monthly_projected",
+            "type": "metric_display",
+            "label": "Monthly Projected",
+            "source": "cost_report.monthly_projected_cost_usd",
+            "format": "currency",
+            "currency_symbol": "$",
+            "suffix": "/mo"
+          },
+          {
+            "id": "budget_utilisation",
+            "type": "progress_display",
+            "label": "Budget Utilisation",
+            "source": "cost_report.budget_utilisation_pct",
+            "max": 100,
+            "color_thresholds": {
+              "green": 75,
+              "amber": 90,
+              "red": 100
+            }
+          },
+          {
+            "id": "cost_verdict",
+            "type": "text_display",
+            "label": "Cost Verdict",
+            "source": "cost_report.cost_verdict",
+            "style": "badge",
+            "badge_color_map": {
+              "WITHIN_BUDGET": "green",
+              "OVER_BUDGET": "amber",
+              "CRITICAL_OVERAGE": "red"
+            }
+          },
+          {
+            "id": "remediation_delta",
+            "type": "text_display",
+            "label": "Remediation Cost Delta",
+            "source": "cost_report.remediation_cost_delta_usd",
+            "format": "currency_delta"
+          },
+          {
+            "id": "top_workload",
+            "type": "text_display",
+            "label": "Top Workload",
+            "source": "cost_report.top_workload"
+          },
+          {
+            "id": "cost_recommendation",
+            "type": "text_area_display",
+            "label": "Cost Recommendation",
+            "source": "cost_report.recommendation",
+            "columns_span": 3,
+            "style": "info_box"
+          }
+        ]
+      },
+      {
+        "id": "approval_section",
+        "title": "Approval Decision",
+        "columns": 1,
+        "fields": [
+          {
+            "id": "approver_notes",
+            "type": "text_area",
+            "label": "Notes (optional)",
+            "placeholder": "Add any context, override rationale, or caveats...",
+            "required": false
+          },
+          {
+            "id": "approval_decision",
+            "type": "button_group",
+            "label": "Decision",
+            "required": true,
+            "options": [
+              {
+                "id": "approve",
+                "label": "✅ Approve Remediation",
+                "style": "success",
+                "action": "submit",
+                "value": "approved"
+              },
+              {
+                "id": "reject",
+                "label": "❌ Reject — Escalate to Human",
+                "style": "danger",
+                "action": "submit",
+                "value": "rejected"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "output_schema": {
+    "type": "object",
+    "properties": {
+      "decision": {
+        "type": "string",
+        "enum": ["approved", "rejected"]
+      },
+      "approved_by": {
+        "type": "string"
+      },
+      "approved_at": {
+        "type": "string",
+        "format": "datetime"
+      },
+      "notes": {
+        "type": "string"
+      }
+    }
+  }
+}

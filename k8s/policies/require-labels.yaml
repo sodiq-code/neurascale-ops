@@ -1,0 +1,33 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: require-neuroscale-labels
+  annotations:
+    policies.kyverno.io/title: "Require NeuroScale Labels"
+    policies.kyverno.io/category: "Governance"
+    policies.kyverno.io/severity: "low"
+    policies.kyverno.io/description: >-
+      All production workloads must carry neuroscale.io/ labels for
+      incident routing, cost allocation (OpenCost), and post-mortem tracking.
+spec:
+  validationFailureAction: Audit
+  background: true
+  rules:
+    - name: check-required-labels
+      match:
+        any:
+          - resources:
+              kinds:
+                - Deployment
+                - StatefulSet
+              namespaces:
+                - production
+      validate:
+        message: >-
+          Deployments must have labels: app.kubernetes.io/name,
+          neuroscale.io/environment, and app.kubernetes.io/managed-by.
+        pattern:
+          metadata:
+            labels:
+              app.kubernetes.io/name: "?*"
+              neuroscale.io/environment: "?*"

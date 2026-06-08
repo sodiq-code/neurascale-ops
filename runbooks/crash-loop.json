@@ -1,0 +1,33 @@
+{
+  "id": "RB-004",
+  "title": "Pod CrashLoopBackOff",
+  "tags": ["crash", "loop", "restart", "pod", "init-container"],
+  "severity": "HIGH",
+  "created": "2026-06-08",
+  "description": "Pod is crash-looping — container starts, fails, and Kubernetes keeps restarting it with exponential backoff.",
+  "root_causes": [
+    "Application startup error (bad config, missing env var)",
+    "Init container failing",
+    "Liveness probe too aggressive",
+    "Dependency unavailable on startup"
+  ],
+  "remediation_steps": [
+    {
+      "step": 1,
+      "action": "kubectl_restart",
+      "description": "Force pod recreation — clears backoff timer",
+      "automated": true
+    },
+    {
+      "step": 2,
+      "action": "argocd_sync",
+      "description": "Sync from Git to ensure latest healthy config",
+      "automated": true
+    }
+  ],
+  "manual_checks": [
+    "kubectl logs <pod> --previous — check last crash reason",
+    "kubectl describe pod <pod> — check Events section",
+    "Verify all required Secrets/ConfigMaps exist"
+  ]
+}

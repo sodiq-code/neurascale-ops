@@ -1,0 +1,46 @@
+{
+  "id": "RB-001",
+  "title": "CPU Throttling — KServe InferenceService",
+  "tags": ["cpu", "throttling", "kserve", "resource_limits", "production"],
+  "severity": "HIGH",
+  "created": "2026-06-08",
+  "last_updated": "2026-06-08",
+  "description": "Handles CPU throttling incidents on KServe InferenceService predictor pods. Common in production when model inference load exceeds CPU limits.",
+  "detection": {
+    "alert": "CPUThrottlingHigh",
+    "threshold": ">80% throttling ratio for 5 minutes",
+    "prometheus_expr": "rate(container_cpu_cfs_throttled_seconds_total[5m]) / rate(container_cpu_cfs_periods_total[5m]) > 0.80"
+  },
+  "root_causes": [
+    "CPU limits set too low for current inference load",
+    "Unexpected traffic spike — HPA not scaled yet",
+    "Model batch size too large for allocated CPU"
+  ],
+  "remediation_steps": [
+    {
+      "step": 1,
+      "action": "patch_resources",
+      "description": "Increase CPU limits to 2x current value",
+      "kubectl_command": "kubectl -n production patch inferenceservice {name} --type merge -p '{\"spec\":{\"predictor\":{\"model\":{\"resources\":{\"limits\":{\"cpu\":\"2000m\"}}}}}}'",
+      "automated": true
+    },
+    {
+      "step": 2,
+      "action": "argocd_sync",
+      "description": "Sync ArgoCD to ensure Git reflects the change",
+      "automated": true
+    },
+    {
+      "step": 3,
+      "action": "verify",
+      "description": "Check throttling metric dropped below 20% within 5 minutes",
+      "automated": false
+    }
+  ],
+  "prevention": [
+    "Set CPU requests = 50% of limits (avoid burstable QoS class issues)",
+    "Enable KServe HPA with CPU target 60%",
+    "Use Kyverno policy require-resource-limits to enforce minimum limits"
+  ],
+  "escalation": "If throttling persists after 2x limit increase, investigate model optimization or horizontal scaling"
+}

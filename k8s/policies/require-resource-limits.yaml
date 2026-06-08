@@ -1,0 +1,41 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: require-resource-limits
+  annotations:
+    policies.kyverno.io/title: "Require Resource Limits"
+    policies.kyverno.io/category: "Best Practices"
+    policies.kyverno.io/severity: "medium"
+    policies.kyverno.io/description: >-
+      All containers in production must specify CPU and memory limits
+      to prevent resource exhaustion incidents. NeuroScale Ops enforces
+      this via Kyverno to prevent the OOMKilled and CPU throttling patterns
+      that trigger incident response pipelines.
+spec:
+  validationFailureAction: Enforce
+  background: true
+  rules:
+    - name: check-container-resources
+      match:
+        any:
+          - resources:
+              kinds:
+                - Pod
+              namespaces:
+                - production
+      validate:
+        message: |
+          All containers must specify CPU and memory requests and limits.
+          This prevents OOMKilled and CPU throttling incidents detected by NeuroScale Ops.
+          Minimum limits: CPU 100m, Memory 128Mi.
+        pattern:
+          spec:
+            containers:
+              - (name): "*"
+                resources:
+                  limits:
+                    cpu: "?*"
+                    memory: "?*"
+                  requests:
+                    cpu: "?*"
+                    memory: "?*"

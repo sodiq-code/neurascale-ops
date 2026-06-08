@@ -1,0 +1,89 @@
+{
+  "$schema": "https://schemas.uipath.com/agent-builder/v1",
+  "name": "NeuroScale Notification Agent",
+  "description": "Low-code notification agent built in UiPath Agent Builder. Receives incident data from Maestro Case, sends Slack alerts, emails on-call engineers, and creates Jira tickets for critical incidents.",
+  "version": "1.0.0",
+  "type": "notification",
+  "triggers": [
+    {
+      "type": "maestro_case_stage",
+      "stage_id": "stage_2_triage",
+      "event": "stage_completed"
+    }
+  ],
+  "skills": [
+    {
+      "name": "slack_message",
+      "type": "builtin",
+      "connector": "slack",
+      "config": {
+        "channel": "#neurascale-incidents",
+        "webhook_url": "${SLACK_WEBHOOK_URL}"
+      }
+    },
+    {
+      "name": "send_email",
+      "type": "builtin",
+      "connector": "email",
+      "config": {
+        "to": "${ONCALL_EMAIL}",
+        "from": "neurascale-ops@${DOMAIN}",
+        "smtp_env": "SMTP_URL"
+      }
+    },
+    {
+      "name": "create_jira_ticket",
+      "type": "builtin",
+      "connector": "jira",
+      "config": {
+        "project_key": "NOPS",
+        "issue_type": "Incident",
+        "priority_map": {
+          "critical": "Highest",
+          "warning": "Medium",
+          "info": "Low"
+        }
+      }
+    }
+  ],
+  "actions": [
+    {
+      "id": "action_slack_alert",
+      "name": "Send Slack Incident Alert",
+      "skill": "slack_message",
+      "trigger": "on_triage_complete",
+      "template": {
+        "text": "{{ severity_emoji }} *NeuroScale Ops — Incident Detected*\n\n*Alert ID:* `{{ alert_id }}`\n*Root Cause:* `{{ root_cause_type }}`\n*Severity:* `{{ severity }}`\n*Confidence:* `{{ confidence }}`\n*Namespace:* `{{ namespace }}`\n*Action:* `{{ recommended_action }}`\n\n> {{ description }}\n\n*AI Reasoning:* {{ ai_reasoning }}\n\n👉 <{{ maestro_case_url }}|View in Maestro Case>"
+      },
+      "condition": "severity IN ['critical', 'warning']"
+    },
+    {
+      "id": "action_email_oncall",
+      "name": "Email On-Call Engineer",
+      "skill": "send_email",
+      "trigger": "on_triage_complete",
+      "template": {
+        "subject": "[{{ severity.upper() }}] K8s Incident: {{ root_cause_type }} — {{ alert_id }}",
+        "body_html": "<h2>NeuroScale Ops — Incident Alert</h2><p><strong>Alert ID:</strong> {{ alert_id }}</p><p><strong>Root Cause:</strong> {{ root_cause_type }}</p><p><strong>Severity:</strong> {{ severity }}</p><p><strong>Description:</strong> {{ description }}</p><p><strong>Recommended Action:</strong> {{ recommended_action }}</p><p><strong>AI Reasoning:</strong> {{ ai_reasoning }}</p><p><a href='{{ maestro_case_url }}'>View Maestro Case →</a></p>"
+      },
+      "condition": "severity == 'critical'"
+    },
+    {
+      "id": "action_jira_ticket",
+      "name": "Create Jira Incident Ticket",
+      "skill": "create_jira_ticket",
+      "trigger": "on_triage_complete",
+      "template": {
+        "summary": "[{{ severity.upper() }}] K8s {{ root_cause_type }}: {{ resource }} in {{ namespace }}",
+        "description": "h2. Incident Summary\n\n*Alert ID:* {{ alert_id }}\n*Root Cause:* {{ root_cause_type }}\n*Severity:* {{ severity }}\n*Confidence:* {{ confidence }}\n\n*Description:* {{ description }}\n\nh2. AI Triage\n\n{{ ai_reasoning }}\n\nh2. Recommended Action\n\n{{ recommended_action }} — Runbook: {{ runbook_ref }}\n\nh2. Links\n\n* [Maestro Case|{{ maestro_case_url }}]\n* [ArgoCD|{{ argocd_url }}]\n* [Dashboard|{{ dashboard_url }}]"
+      },
+      "condition": "severity == 'critical'"
+    }
+  ],
+  "variables": {
+    "severity_emoji": "{{ {'critical': '🔴', 'warning': '🟡', 'info': '🟢'}.get(severity, '⚪') }}",
+    "maestro_case_url": "${UIPATH_ORCHESTRATOR_URL}/maestro/cases/{{ case_id }}",
+    "argocd_url": "${ARGOCD_SERVER}/applications",
+    "dashboard_url": "${DASHBOARD_URL}"
+  }
+}

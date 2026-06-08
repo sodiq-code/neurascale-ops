@@ -1,0 +1,102 @@
+---
+# NeuroScale Ops — UiPath API Workflow: Prometheus Alertmanager Webhook Receiver
+# Receives Prometheus/Alertmanager POST requests and creates a Maestro Case.
+#
+# Configure in Alertmanager:
+#   receivers:
+#   - name: neurascale-ops
+#     webhook_configs:
+#     - url: https://<uipath-orchestrator>/api/neurascale-ops/prometheus-webhook
+#
+name: prometheus_webhook_receiver
+type: api_workflow
+version: "1.0"
+trigger:
+  method: POST
+  path: /prometheus-webhook
+  authentication: api_key
+  headers:
+    Content-Type: application/json
+
+input_schema:
+  type: object
+  properties:
+    version:
+      type: string
+    groupKey:
+      type: string
+    status:
+      type: string
+      enum: [firing, resolved]
+    receiver:
+      type: string
+    alerts:
+      type: array
+      items:
+        type: object
+        properties:
+          labels:
+            type: object
+            properties:
+              alertname:
+                type: string
+              severity:
+                type: string
+                enum: [critical, warning, info]
+              namespace:
+                type: string
+              pod:
+                type: string
+          annotations:
+            type: object
+            properties:
+              summary:
+                type: string
+              description:
+                type: string
+          startsAt:
+            type: string
+          endsAt:
+            type: string
+
+steps:
+  - id: filter_firing
+    type: condition
+    condition: "input.status == 'firing'"
+    on_false: skip_to_end
+
+  - id: normalize_alert
+    type: transform
+    mapping:
+      id: "alert-prom-{{ uuid() }}"
+      timestamp: "{{ input.alerts[0].startsAt }}"
+      severity: "{{ input.alerts[0].labels.severity }}"
+      type: "{{ input.alerts[0].labels.alertname | lower | replace(' ', '_') }}"
+      namespace: "{{ input.alerts[0].labels.namespace | default('default') }}"
+      resource: "{{ input.alerts[0].labels.pod | default('unknown') }}"
+      message: "{{ input.alerts[0].annotations.description | default(input.alerts[0].annotations.summary) }}"
+      raw_data: "{{ input.alerts[0].labels }}"
+
+  - id: call_triage_agent
+    type: http_request
+    url: "${TRIAGE_AGENT_URL}/analyze"
+    method: POST
+    body: "{{ normalize_alert.output }}"
+    timeout_seconds: 30
+
+  - id: create_maestro_case
+    type: maestro_case
+    case_definition: "neurascale_ops_incident_response"
+    data:
+      alert: "{{ normalize_alert.output }}"
+      triage_report: "{{ call_triage_agent.response }}"
+
+output_schema:
+  type: object
+  properties:
+    case_id:
+      type: string
+    status:
+      type: string
+    message:
+      type: string

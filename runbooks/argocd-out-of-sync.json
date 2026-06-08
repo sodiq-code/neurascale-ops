@@ -1,0 +1,24 @@
+{
+  "id": "RB-003",
+  "title": "ArgoCD Application Out of Sync",
+  "tags": ["argocd", "sync", "gitops", "drift"],
+  "severity": "HIGH",
+  "created": "2026-06-08",
+  "description": "ArgoCD application has drifted from Git-defined state. Could indicate unauthorized manual changes, a failed sync, or a merge that introduced breaking changes.",
+  "remediation_steps": [
+    {
+      "step": 1,
+      "action": "argocd_sync",
+      "description": "Trigger ArgoCD hard refresh + sync to reconcile cluster with Git",
+      "parameters": {"hard_refresh": true},
+      "automated": true
+    },
+    {
+      "step": 2,
+      "action": "verify",
+      "description": "Confirm application shows Synced/Healthy within 60s",
+      "automated": false
+    }
+  ],
+  "escalation": "If sync fails repeatedly, check ArgoCD application events for constraint violations (Kyverno) or resource conflicts."
+}

@@ -1,0 +1,162 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: neurascale-ops
+  namespace: neurascale-ops
+  labels:
+    app: neurascale-ops
+    version: "1.0.0"
+    app.kubernetes.io/name: neurascale-ops
+    app.kubernetes.io/managed-by: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: neurascale-ops
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        app: neurascale-ops
+        version: "1.0.0"
+    spec:
+      serviceAccountName: neurascale-ops-sa
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        fsGroup: 1000
+      containers:
+        - name: neurascale-ops
+          image: ghcr.io/sodiq-code/neurascale-ops:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8501
+              name: dashboard
+            - containerPort: 8080
+              name: api
+          env:
+            - name: DEMO_MODE
+              value: "false"
+            - name: OPENAI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: neurascale-ops-secrets
+                  key: openai-api-key
+            - name: ARGOCD_SERVER
+              valueFrom:
+                configMapKeyRef:
+                  name: neurascale-ops-config
+                  key: argocd-server
+            - name: ARGOCD_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: neurascale-ops-secrets
+                  key: argocd-token
+            - name: OPENCOST_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: neurascale-ops-config
+                  key: opencost-url
+            - name: MAESTRO_WEBHOOK_URL
+              valueFrom:
+                secretKeyRef:
+                  name: neurascale-ops-secrets
+                  key: maestro-webhook-url
+            - name: SLACK_WEBHOOK_URL
+              valueFrom:
+                secretKeyRef:
+                  name: neurascale-ops-secrets
+                  key: slack-webhook-url
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: 8080
+            initialDelaySeconds: 15
+            periodSeconds: 10
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: false
+            capabilities:
+              drop:
+                - ALL
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: neurascale-ops-sa
+  namespace: neurascale-ops
+  labels:
+    app: neurascale-ops
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: neurascale-ops-role
+rules:
+  - apiGroups: [""]
+    resources: ["pods", "events", "namespaces", "nodes"]
+    verbs: ["get", "list", "watch", "delete"]
+  - apiGroups: ["apps"]
+    resources: ["deployments", "replicasets"]
+    verbs: ["get", "list", "watch", "patch", "update"]
+  - apiGroups: ["serving.kserve.io"]
+    resources: ["inferenceservices"]
+    verbs: ["get", "list", "watch", "patch", "update"]
+  - apiGroups: ["kyverno.io"]
+    resources: ["policyexceptions", "clusterpolicies"]
+    verbs: ["get", "list", "watch", "create", "update"]
+  - apiGroups: ["argoproj.io"]
+    resources: ["applications"]
+    verbs: ["get", "list", "watch", "patch", "update"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: neurascale-ops-binding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: neurascale-ops-role
+subjects:
+  - kind: ServiceAccount
+    name: neurascale-ops-sa
+    namespace: neurascale-ops
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: neurascale-ops
+  namespace: neurascale-ops
+  labels:
+    app: neurascale-ops
+spec:
+  type: ClusterIP
+  selector:
+    app: neurascale-ops
+  ports:
+    - name: dashboard
+      port: 8501
+      targetPort: 8501
+    - name: api
+      port: 8080
+      targetPort: 8080

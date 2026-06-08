@@ -1,0 +1,38 @@
+{
+  "id": "RB-002",
+  "title": "OOMKilled — Container Memory Exhaustion",
+  "tags": ["oom", "memory", "killed", "kserve", "resource_limits"],
+  "severity": "CRITICAL",
+  "created": "2026-06-08",
+  "description": "Container exceeded memory limit and was killed by the Linux OOM killer. Requires immediate memory limit increase and model restart.",
+  "detection": {
+    "alert": "KubeContainerOOMKilled",
+    "threshold": "kube_pod_container_status_last_terminated_reason == OOMKilled",
+    "immediate": true
+  },
+  "root_causes": [
+    "Memory limit too low for model artifact size",
+    "Memory leak in inference code",
+    "Large batch request causing spike above limit"
+  ],
+  "remediation_steps": [
+    {
+      "step": 1,
+      "action": "patch_resources",
+      "description": "Increase memory limit to 2x or minimum 1Gi",
+      "parameters": {"memory_limit": "1Gi"},
+      "automated": true
+    },
+    {
+      "step": 2,
+      "action": "kubectl_restart",
+      "description": "Restart the predictor pod with new limits",
+      "automated": true
+    }
+  ],
+  "prevention": [
+    "Monitor container_memory_working_set_bytes; alert at 80% of limit",
+    "Use VPA (Vertical Pod Autoscaler) recommendations as baseline",
+    "Set memory requests = limits for Guaranteed QoS class"
+  ]
+}

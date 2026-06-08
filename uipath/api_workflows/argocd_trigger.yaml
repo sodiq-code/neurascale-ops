@@ -1,0 +1,101 @@
+---
+# NeuroScale Ops — UiPath API Workflow: ArgoCD Rollback Trigger
+# Called by RemediationAgent (Stage 5) to initiate an ArgoCD sync/rollback.
+# Can also be triggered manually from the UiPath Apps approval form.
+#
+name: argocd_rollback_trigger
+type: api_workflow
+version: "1.0"
+trigger:
+  method: POST
+  path: /argocd/rollback
+  authentication: bearer_token
+
+input_schema:
+  type: object
+  required: [app_name, alert_id, approved_by]
+  properties:
+    app_name:
+      type: string
+      description: ArgoCD application name
+    alert_id:
+      type: string
+      description: Originating alert ID (for audit trail)
+    approved_by:
+      type: string
+      description: Username who approved the remediation in Maestro
+    hard_refresh:
+      type: boolean
+      default: true
+    dry_run:
+      type: boolean
+      default: false
+
+steps:
+  - id: validate_approval
+    type: assertion
+    condition: "input.approved_by != null && input.approved_by != ''"
+    error_message: "Rollback requires human approval. approved_by field cannot be empty."
+
+  - id: log_audit
+    type: http_request
+    url: "${ORCHESTRATOR_URL}/api/audit"
+    method: POST
+    body:
+      event: "argocd_rollback_initiated"
+      app_name: "{{ input.app_name }}"
+      alert_id: "{{ input.alert_id }}"
+      approved_by: "{{ input.approved_by }}"
+      timestamp: "{{ now() }}"
+
+  - id: argocd_hard_refresh
+    type: http_request
+    condition: "input.hard_refresh == true"
+    url: "https://{{ env.ARGOCD_SERVER }}/api/v1/applications/{{ input.app_name }}?refresh=hard"
+    method: GET
+    headers:
+      Authorization: "Bearer {{ env.ARGOCD_TOKEN }}"
+    verify_ssl: false
+    timeout_seconds: 15
+
+  - id: argocd_sync
+    type: http_request
+    condition: "input.dry_run == false"
+    url: "https://{{ env.ARGOCD_SERVER }}/api/v1/applications/{{ input.app_name }}/sync"
+    method: POST
+    headers:
+      Authorization: "Bearer {{ env.ARGOCD_TOKEN }}"
+      Content-Type: application/json
+    body:
+      prune: false
+      dryRun: false
+      strategy:
+        hook: {}
+    verify_ssl: false
+    timeout_seconds: 60
+
+  - id: wait_for_sync
+    type: poll
+    url: "https://{{ env.ARGOCD_SERVER }}/api/v1/applications/{{ input.app_name }}"
+    method: GET
+    headers:
+      Authorization: "Bearer {{ env.ARGOCD_TOKEN }}"
+    verify_ssl: false
+    poll_interval_seconds: 5
+    max_polls: 24
+    success_condition: "response.status.sync.status == 'Synced' && response.status.health.status == 'Healthy'"
+    timeout_message: "ArgoCD sync did not complete within 120 seconds."
+
+output_schema:
+  type: object
+  properties:
+    success:
+      type: boolean
+    app_name:
+      type: string
+    sync_status:
+      type: string
+    health_status:
+      type: string
+    duration_seconds:
+      type: number

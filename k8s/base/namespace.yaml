@@ -1,0 +1,18 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: neurascale-ops
+  labels:
+    app.kubernetes.io/name: neurascale-ops
+    app.kubernetes.io/managed-by: argocd
+    neurascale.io/env: production
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ml-workloads
+  labels:
+    app.kubernetes.io/name: ml-workloads
+    neurascale.io/env: production
+    neurascale.io/cost-centre: "ml-team"

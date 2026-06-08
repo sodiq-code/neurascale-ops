@@ -1,0 +1,126 @@
+{
+  "$schema": "https://schemas.uipath.com/maestro/case/v1",
+  "name": "NeuroScale Ops — K8s Incident Response",
+  "description": "AI-powered Kubernetes incident response orchestrated by UiPath Maestro. Detects cluster anomalies, performs AI triage, evaluates cost impact, obtains human approval, executes remediation via ArgoCD, and generates post-mortem documentation.",
+  "version": "1.0.0",
+  "author": "Sodiq Jimoh — NeuroScale Ops",
+  "track": "Track 1 — UiPath Maestro Case",
+  "stages": [
+    {
+      "id": "stage_1_detection",
+      "name": "Incident Detection",
+      "description": "Detector Agent continuously monitors the K8s cluster. Emits a structured Alert on OOMKill, CrashLoop, PolicyViolation, CostSpike, or DeploymentFailure.",
+      "type": "automated",
+      "agent": "detector_agent",
+      "inputs": ["k8s_cluster_events", "prometheus_webhook"],
+      "outputs": ["alert"],
+      "sla_minutes": 1,
+      "on_success": "stage_2_triage"
+    },
+    {
+      "id": "stage_2_triage",
+      "name": "AI Triage",
+      "description": "Triage Agent (GPT-4o-mini) performs root cause analysis, matches runbook, calculates confidence score.",
+      "type": "coded_agent",
+      "agent": "triage_agent",
+      "model": "gpt-4o-mini",
+      "inputs": ["alert"],
+      "outputs": ["triage_report"],
+      "sla_minutes": 2,
+      "on_success": "stage_3_cost_impact"
+    },
+    {
+      "id": "stage_3_cost_impact",
+      "name": "Cost Impact Analysis",
+      "description": "Cost Agent queries OpenCost for namespace-level spend, calculates remediation cost delta, assesses budget utilisation.",
+      "type": "api_workflow",
+      "workflow": "opencost_query",
+      "inputs": ["triage_report"],
+      "outputs": ["cost_report"],
+      "sla_minutes": 1,
+      "on_success": "stage_4_human_approval"
+    },
+    {
+      "id": "stage_4_human_approval",
+      "name": "Human Approval",
+      "description": "UiPath Apps form presented to SRE/on-call engineer showing triage report, cost impact, and AI reasoning. Human approves or rejects the proposed remediation action.",
+      "type": "human_in_loop",
+      "app": "triage_approval_form",
+      "inputs": ["triage_report", "cost_report"],
+      "outputs": ["approval_decision"],
+      "sla_minutes": 15,
+      "escalation_on_timeout": "on_call_engineer",
+      "on_approve": "stage_5_remediation",
+      "on_reject": "stage_6_postmortem"
+    },
+    {
+      "id": "stage_5_remediation",
+      "name": "Execute Remediation",
+      "description": "Remediation Agent executes the approved action: kubectl patch, ArgoCD rollback, scale-down, or Kyverno exception creation. Circuit breaker prevents runaway loops.",
+      "type": "coded_agent",
+      "agent": "remediation_agent",
+      "inputs": ["triage_report", "approval_decision"],
+      "outputs": ["execution_result"],
+      "sla_minutes": 5,
+      "on_success": "stage_5b_remediation_approval",
+      "on_failure": "stage_6_postmortem"
+    },
+    {
+      "id": "stage_5b_remediation_approval",
+      "name": "Remediation Signoff",
+      "description": "Engineer confirms the remediation resolved the incident. Final signoff before case closure.",
+      "type": "human_in_loop",
+      "app": "signoff_form",
+      "inputs": ["execution_result"],
+      "outputs": ["signoff"],
+      "sla_minutes": 10,
+      "on_approve": "stage_6_postmortem",
+      "on_reject": "stage_5_remediation"
+    },
+    {
+      "id": "stage_6_postmortem",
+      "name": "Post-Mortem & Documentation",
+      "description": "UiPath Document Understanding generates a structured post-mortem PDF summarising the incident timeline, root cause, actions taken, cost impact, and preventive recommendations.",
+      "type": "document_understanding",
+      "template": "postmortem_template",
+      "inputs": ["alert", "triage_report", "cost_report", "execution_result"],
+      "outputs": ["postmortem_pdf"],
+      "sla_minutes": 3,
+      "on_success": "case_closed"
+    }
+  ],
+  "integrations": {
+    "k8s": {
+      "type": "kubernetes",
+      "auth": "in_cluster | kubeconfig",
+      "capabilities": ["pod_watch", "deployment_patch", "argocd_rollback"]
+    },
+    "opencost": {
+      "type": "http",
+      "url": "${OPENCOST_URL}",
+      "auth": "none"
+    },
+    "argocd": {
+      "type": "http",
+      "url": "${ARGOCD_SERVER}",
+      "auth": "bearer_token",
+      "token_env": "ARGOCD_TOKEN"
+    },
+    "openai": {
+      "type": "openai",
+      "model": "gpt-4o-mini",
+      "auth": "api_key",
+      "key_env": "OPENAI_API_KEY"
+    }
+  },
+  "settings": {
+    "auto_start": true,
+    "retry_policy": "exponential_backoff",
+    "max_retries": 3,
+    "audit_log": true,
+    "notifications": {
+      "slack": "${SLACK_WEBHOOK_URL}",
+      "email": "${ONCALL_EMAIL}"
+    }
+  }
+}

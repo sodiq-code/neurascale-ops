@@ -1,0 +1,117 @@
+---
+# NeuroScale Ops — UiPath API Workflow: OpenCost Namespace Cost Query
+# Called during Stage 3 (Cost Impact Analysis) of the Maestro Case.
+# Returns per-namespace cost breakdown to inform human approval context.
+#
+name: opencost_namespace_query
+type: api_workflow
+version: "1.0"
+trigger:
+  method: GET
+  path: /opencost/namespace-costs
+  authentication: api_key
+  query_params:
+    namespace:
+      type: string
+      required: false
+    window:
+      type: string
+      default: "24h"
+      description: "Time window: 1h, 6h, 24h, 7d, 30d"
+
+steps:
+  - id: query_namespace_allocation
+    type: http_request
+    url: "{{ env.OPENCOST_URL }}/model/allocation"
+    method: GET
+    query_params:
+      window: "{{ input.window }}"
+      aggregate: namespace
+      accumulate: "true"
+    timeout_seconds: 10
+    on_error: return_demo_data
+
+  - id: transform_costs
+    type: transform
+    input: "{{ query_namespace_allocation.response.data[0] }}"
+    mapping:
+      namespaces:
+        type: array
+        foreach: "{{ item }}"
+        output:
+          namespace: "{{ key }}"
+          totalCost: "{{ value.totalCost | round(4) }}"
+          cpuCost: "{{ value.cpuCost | round(4) }}"
+          ramCost: "{{ value.ramCost | round(4) }}"
+          networkCost: "{{ value.networkCost | round(4) }}"
+          pvCost: "{{ value.pvCost | round(4) }}"
+
+  - id: filter_by_namespace
+    type: condition
+    condition: "input.namespace != null"
+    on_true:
+      type: filter
+      array: "{{ transform_costs.namespaces }}"
+      where: "item.namespace == input.namespace"
+    on_false:
+      value: "{{ transform_costs.namespaces }}"
+
+  - id: calculate_budget_utilisation
+    type: javascript
+    code: |
+      const budgets = {
+        "production":   800.0,
+        "ml-workloads": 600.0,
+        "staging":      200.0,
+        "default":      100.0,
+      };
+      return filter_by_namespace.output.map(ns => ({
+        ...ns,
+        monthlyProjectedCost: parseFloat((ns.totalCost / (parseInt(input.window) || 24) * 24 * 30).toFixed(2)),
+        budgetUsd: budgets[ns.namespace] || 500.0,
+        budgetUtilisationPct: parseFloat(
+          ((ns.totalCost / (parseInt(input.window) || 24) * 24 * 30) / (budgets[ns.namespace] || 500.0) * 100).toFixed(1)
+        ),
+      }));
+
+  - id: return_demo_data
+    type: static
+    data:
+      namespaces:
+        - namespace: production
+          totalCost: 1.2341
+          cpuCost: 0.6102
+          ramCost: 0.6239
+          monthlyProjectedCost: 370.23
+          budgetUsd: 800.0
+          budgetUtilisationPct: 46.3
+        - namespace: ml-workloads
+          totalCost: 0.8341
+          cpuCost: 0.4102
+          ramCost: 0.4239
+          monthlyProjectedCost: 250.23
+          budgetUsd: 600.0
+          budgetUtilisationPct: 41.7
+
+output_schema:
+  type: object
+  properties:
+    namespaces:
+      type: array
+      items:
+        type: object
+        properties:
+          namespace:
+            type: string
+          totalCost:
+            type: number
+          cpuCost:
+            type: number
+          ramCost:
+            type: number
+          monthlyProjectedCost:
+            type: number
+          budgetUsd:
+            type: number
+          budgetUtilisationPct:
+            type: number

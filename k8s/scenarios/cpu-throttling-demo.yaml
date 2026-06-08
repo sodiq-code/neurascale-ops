@@ -1,0 +1,69 @@
+# Demo Scenario: CPU Throttling
+# Deploys a deliberately under-resourced pod to trigger CPUThrottlingHigh alert
+# Used to demonstrate the full NeuroScale Ops incident response pipeline
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: neuroscale-stress-demo
+  namespace: production
+  labels:
+    app: neuroscale-stress-demo
+    neuroscale.io/environment: production
+    neuroscale.io/demo: "true"
+  annotations:
+    neuroscale.io/demo-scenario: "cpu-throttling"
+    neuroscale.io/description: "Intentionally low CPU limits to trigger throttling alert"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: neuroscale-stress-demo
+  template:
+    metadata:
+      labels:
+        app: neuroscale-stress-demo
+    spec:
+      containers:
+        - name: stress
+          image: progrium/stress
+          args:
+            - "--cpu"
+            - "2"          # Try to use 2 CPU cores
+            - "--timeout"
+            - "300s"
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "64Mi"
+            limits:
+              cpu: "100m"  # Way too low → triggers CPUThrottlingHigh
+              memory: "64Mi"
+---
+# Simulated Alertmanager webhook payload for demo
+# Use scripts/trigger_test.sh to send this to the UiPath webhook endpoint
+# apiVersion: v1
+# kind: ConfigMap
+# metadata:
+#   name: demo-alert-payload
+#   namespace: default
+# data:
+#   payload.json: |
+#     {
+#       "version": "4",
+#       "status": "firing",
+#       "alerts": [{
+#         "status": "firing",
+#         "labels": {
+#           "alertname": "CPUThrottlingHigh",
+#           "severity": "critical",
+#           "namespace": "production",
+#           "deployment": "neuroscale-stress-demo",
+#           "value": "0.92"
+#         },
+#         "annotations": {
+#           "summary": "CPU throttling >80% for neuroscale-stress-demo",
+#           "description": "Throttled 92% — limits too low"
+#         }
+#       }]
+#     }

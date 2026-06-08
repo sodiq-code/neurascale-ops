@@ -1,0 +1,43 @@
+version: "3.9"
+
+services:
+  neurascale-ops:
+    build: .
+    container_name: neurascale-ops
+    ports:
+      - "8501:8501"    # Streamlit dashboard
+      - "8080:8080"    # API / health checks
+    environment:
+      - DEMO_MODE=true
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - ARGOCD_SERVER=${ARGOCD_SERVER:-localhost:8080}
+      - OPENCOST_URL=http://opencost:9090
+      - MAESTRO_WEBHOOK_URL=${MAESTRO_WEBHOOK_URL:-}
+      - SLACK_WEBHOOK_URL=${SLACK_WEBHOOK_URL:-}
+    volumes:
+      - ~/.kube:/home/neurascale/.kube:ro
+    networks:
+      - neurascale-net
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8501/_stcore/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Optional: OpenCost (mock for local dev)
+  opencost:
+    image: gcr.io/kubecost1/cost-model:latest
+    container_name: opencost
+    ports:
+      - "9090:9090"
+    environment:
+      - PROMETHEUS_SERVER_ENDPOINT=http://prometheus:9090
+    networks:
+      - neurascale-net
+    profiles:
+      - full
+
+networks:
+  neurascale-net:
+    driver: bridge

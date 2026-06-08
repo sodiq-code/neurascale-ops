@@ -1,0 +1,53 @@
+apiVersion: serving.kserve.io/v1beta1
+kind: InferenceService
+metadata:
+  name: neuroscale-bert-classifier
+  namespace: production
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+  labels:
+    app: neuroscale-bert-classifier
+    neuroscale.io/model-type: nlp
+    neuroscale.io/environment: production
+spec:
+  predictor:
+    minReplicas: 1
+    maxReplicas: 3
+    scaleTarget: 2
+    scaleMetric: concurrency
+    model:
+      modelFormat:
+        name: huggingface
+      storageUri: "hf://distilbert-base-uncased-finetuned-sst-2-english"
+      resources:
+        requests:
+          cpu: "500m"
+          memory: "512Mi"
+        limits:
+          cpu: "1000m"    # Increased from 500m — see INC-20260608 remediation
+          memory: "1Gi"
+---
+apiVersion: serving.kserve.io/v1beta1
+kind: InferenceService
+metadata:
+  name: neuroscale-sklearn-iris
+  namespace: production
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+  labels:
+    app: neuroscale-sklearn-iris
+    neuroscale.io/model-type: classification
+spec:
+  predictor:
+    minReplicas: 1
+    model:
+      modelFormat:
+        name: sklearn
+      storageUri: "gs://kfserving-examples/models/sklearn/1.0/model"
+      resources:
+        requests:
+          cpu: "100m"
+          memory: "128Mi"
+        limits:
+          cpu: "500m"
+          memory: "256Mi"

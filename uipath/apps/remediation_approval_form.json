@@ -1,0 +1,167 @@
+{
+  "formId": "remediation_approval_form",
+  "formVersion": "1.2.0",
+  "title": "Remediation Execution Approval",
+  "description": "Final authorization gate before NeuroScale Ops executes automated remediation against the cluster. Review AI-recommended action, cost impact, and runbook before approving.",
+  "maestroStage": 4,
+  "assigneeRole": "platform-engineer",
+  "slaMinutes": 15,
+  "escalationPolicy": "auto-approve-if-confidence-HIGH-and-cost-lt-500",
+  "fields": [
+    {
+      "id": "incident_summary",
+      "type": "readonly_card",
+      "label": "Incident Summary",
+      "source": "maestro.case.triageReport",
+      "display": {
+        "fields": ["alert_id", "root_cause_type", "severity", "namespace", "confidence"],
+        "highlight": "severity"
+      }
+    },
+    {
+      "id": "ai_reasoning",
+      "type": "readonly_text",
+      "label": "AI Root Cause Analysis",
+      "source": "maestro.case.triageReport.ai_reasoning",
+      "multiline": true
+    },
+    {
+      "id": "remediation_action",
+      "type": "readonly_badge",
+      "label": "Proposed Remediation Action",
+      "source": "maestro.case.triageReport.recommended_action",
+      "badgeColors": {
+        "patch_resources": "blue",
+        "rollback": "orange",
+        "scale_down": "yellow",
+        "restart_pod": "green",
+        "create_exception": "purple",
+        "escalate": "red"
+      }
+    },
+    {
+      "id": "runbook_ref",
+      "type": "readonly_link",
+      "label": "Matched Runbook",
+      "source": "maestro.case.triageReport.runbook_ref",
+      "linkTemplate": "https://github.com/sodiq-code/neurascale-ops/blob/main/runbooks/{value}.json"
+    },
+    {
+      "id": "cost_impact",
+      "type": "readonly_metric",
+      "label": "Estimated Cost Impact (USD/hr if unresolved)",
+      "source": "maestro.case.costReport.projected_waste_usd",
+      "format": "currency",
+      "warnThreshold": 200,
+      "criticalThreshold": 1000
+    },
+    {
+      "id": "argocd_target",
+      "type": "readonly_text",
+      "label": "ArgoCD Application Target",
+      "source": "maestro.case.remediationPlan.argocd_app",
+      "defaultValue": "neurascale-ops"
+    },
+    {
+      "id": "dry_run_results",
+      "type": "readonly_json",
+      "label": "Dry-Run Validation Results",
+      "source": "maestro.case.remediationPlan.dry_run_output",
+      "collapsible": true,
+      "defaultCollapsed": false
+    },
+    {
+      "id": "risk_acknowledgement",
+      "type": "checkbox",
+      "label": "I have reviewed the remediation plan and acknowledge the risk of execution",
+      "required": true,
+      "validation": {
+        "mustBeTrue": true,
+        "errorMessage": "You must acknowledge the risk before approving"
+      }
+    },
+    {
+      "id": "approval_notes",
+      "type": "textarea",
+      "label": "Approval Notes (optional)",
+      "placeholder": "Add any context, caveats, or conditions for this approval...",
+      "required": false,
+      "maxLength": 1000
+    },
+    {
+      "id": "approval_decision",
+      "type": "radio_decision",
+      "label": "Remediation Decision",
+      "required": true,
+      "options": [
+        {
+          "value": "APPROVE",
+          "label": "Approve — Execute remediation now",
+          "color": "green",
+          "icon": "check-circle"
+        },
+        {
+          "value": "APPROVE_MODIFIED",
+          "label": "Approve with modifications",
+          "color": "blue",
+          "icon": "edit"
+        },
+        {
+          "value": "ESCALATE",
+          "label": "Escalate to senior engineer",
+          "color": "orange",
+          "icon": "arrow-up"
+        },
+        {
+          "value": "REJECT",
+          "label": "Reject — Manual resolution only",
+          "color": "red",
+          "icon": "x-circle"
+        }
+      ]
+    },
+    {
+      "id": "modified_action",
+      "type": "select",
+      "label": "Override Remediation Action (if APPROVE_MODIFIED)",
+      "required": false,
+      "visibleWhen": "approval_decision == 'APPROVE_MODIFIED'",
+      "options": [
+        "patch_resources",
+        "rollback",
+        "scale_down",
+        "restart_pod",
+        "create_exception",
+        "monitor",
+        "escalate"
+      ]
+    }
+  ],
+  "actions": {
+    "onApprove": {
+      "triggerStage": "stage_5_remediation",
+      "payload": {
+        "approver": "{{currentUser.email}}",
+        "decision": "{{approval_decision.value}}",
+        "override_action": "{{modified_action.value}}",
+        "notes": "{{approval_notes.value}}",
+        "approved_at": "{{timestamp.utc}}"
+      }
+    },
+    "onEscalate": {
+      "notifyRole": "senior-sre",
+      "slaMinutes": 30
+    },
+    "onReject": {
+      "triggerStage": "stage_7_postmortem",
+      "createJiraTicket": true,
+      "jiraProject": "OPS",
+      "jiraIssueType": "Incident"
+    }
+  },
+  "auditLog": {
+    "enabled": true,
+    "storeDecision": true,
+    "retentionDays": 90
+  }
+}

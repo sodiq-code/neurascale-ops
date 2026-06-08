@@ -1,0 +1,138 @@
+{
+  "$schema": "https://schemas.uipath.com/apps/v1",
+  "name": "NeuroScale Ops — Remediation Signoff Form",
+  "description": "Post-remediation verification form for Maestro Case Stage 5b. Engineer confirms the remediation resolved the incident before case closure and post-mortem generation.",
+  "version": "1.0.0",
+  "type": "signoff_form",
+  "theme": "dark",
+  "layout": {
+    "columns": 2,
+    "sections": [
+      {
+        "id": "execution_summary",
+        "title": "Remediation Execution Summary",
+        "columns": 2,
+        "fields": [
+          {
+            "id": "action_taken",
+            "type": "text_display",
+            "label": "Action Executed",
+            "source": "execution_result.action_taken",
+            "style": "badge",
+            "badge_color": "blue"
+          },
+          {
+            "id": "execution_success",
+            "type": "text_display",
+            "label": "Execution Status",
+            "source": "execution_result.success",
+            "style": "badge",
+            "badge_color_map": {
+              "true": "green",
+              "false": "red"
+            }
+          },
+          {
+            "id": "execution_output",
+            "type": "code_display",
+            "label": "Execution Output",
+            "source": "execution_result.output",
+            "columns_span": 2,
+            "language": "bash"
+          },
+          {
+            "id": "duration",
+            "type": "text_display",
+            "label": "Duration",
+            "source": "execution_result.duration_seconds",
+            "suffix": "seconds"
+          },
+          {
+            "id": "timestamp",
+            "type": "text_display",
+            "label": "Executed At",
+            "source": "execution_result.timestamp"
+          }
+        ]
+      },
+      {
+        "id": "signoff_section",
+        "title": "Engineer Signoff",
+        "columns": 1,
+        "fields": [
+          {
+            "id": "incident_resolved",
+            "type": "radio_group",
+            "label": "Is the incident resolved?",
+            "required": true,
+            "options": [
+              {"id": "yes", "label": "Yes — Incident resolved. Close the case.", "value": "resolved"},
+              {"id": "partial", "label": "Partially — Needs further monitoring.", "value": "partial"},
+              {"id": "no", "label": "No — Remediation failed. Re-run required.", "value": "not_resolved"}
+            ]
+          },
+          {
+            "id": "resolution_notes",
+            "type": "text_area",
+            "label": "Resolution Notes",
+            "placeholder": "Describe what was done and how it resolved the incident. This will appear in the post-mortem.",
+            "required": true
+          },
+          {
+            "id": "preventive_actions",
+            "type": "text_area",
+            "label": "Preventive Actions (optional)",
+            "placeholder": "Any changes needed to prevent recurrence? e.g., increase resource limits in base manifest, add Kyverno policy...",
+            "required": false
+          },
+          {
+            "id": "signoff_button",
+            "type": "button_group",
+            "label": "",
+            "required": true,
+            "options": [
+              {
+                "id": "close_case",
+                "label": "✅ Sign Off & Generate Post-Mortem",
+                "style": "success",
+                "action": "submit",
+                "value": "signed_off",
+                "condition": "incident_resolved == 'resolved' || incident_resolved == 'partial'"
+              },
+              {
+                "id": "rerun_remediation",
+                "label": "🔁 Rerun Remediation",
+                "style": "warning",
+                "action": "submit",
+                "value": "rerun",
+                "condition": "incident_resolved == 'not_resolved'"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "output_schema": {
+    "type": "object",
+    "properties": {
+      "incident_resolved": {
+        "type": "string",
+        "enum": ["resolved", "partial", "not_resolved"]
+      },
+      "resolution_notes": {
+        "type": "string"
+      },
+      "preventive_actions": {
+        "type": "string"
+      },
+      "signed_off_by": {
+        "type": "string"
+      },
+      "signed_off_at": {
+        "type": "string",
+        "format": "datetime"
+      }
+    }
+  }
+}
