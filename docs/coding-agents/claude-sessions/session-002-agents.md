@@ -11,12 +11,12 @@
 ```
 Implement the NeuroScale Ops Python agents using code from 3 existing repos:
 - neuroscale-autopilot: detector.py, executor.py
-- neuroscale-agents-v2: diagnostician.py (uses Gemini — replace with GPT-4o-mini)
+- neuroscale-agents-v2: diagnostician.py (uses Gemini — replace with llama-3.3-70b-versatile)
 - neuroscale-ops-agent: kubernetes_ops.py
 
 Requirements:
 1. DEMO_MODE=true must work without any external services
-2. GPT-4o-mini must use response_format=json_object for structured output
+2. llama-3.3-70b-versatile must use response_format=json_object for structured output
 3. Each agent must be independently testable
 4. Circuit breaker pattern in detector for dedup
 5. Cost agent must work with OpenCost REST API + demo fallback
@@ -24,7 +24,7 @@ Requirements:
 
 ## Key Implementation Decisions from Claude
 
-### Replacing Gemini with GPT-4o-mini
+### Replacing Gemini with llama-3.3-70b-versatile
 
 Original diagnostician.py used:
 ```python
@@ -35,10 +35,10 @@ response = _gemini_client.models.generate_content(model="gemini-2.0-flash", ...)
 
 Claude's replacement:
 ```python
-from openai import OpenAI
-_client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY", ""))
+from groq import Groq
+_client = Groq(api_key=os.environ.get("GROQ_API_KEY", ""))
 resp = _client.chat.completions.create(
-    model="gpt-4o-mini",
+    model="llama-3.3-70b-versatile",
     messages=[...],
     response_format={"type": "json_object"},  # eliminates JSON parsing errors
     temperature=0.1,
@@ -73,7 +73,7 @@ Claude suggested the "graceful degradation" approach:
 try:
     root_cause, actions = self._gpt_triage(incident, matched)
 except Exception as e:
-    print(f"⚠️ GPT-4o-mini failed ({e}), falling back to rule-based triage")
+    print(f"⚠️ llama-3.3-70b-versatile failed ({e}), falling back to rule-based triage")
     root_cause, actions = self._rule_triage(incident, matched)
 ```
 

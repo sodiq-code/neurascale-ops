@@ -29,7 +29,7 @@ class NeuroScaleOpsPipeline:
     Maps directly to the UiPath Maestro Case 7-stage definition.
 
     Stage 1: Detection        — DetectorAgent
-    Stage 2: AI Triage        — TriageAgent (GPT-4o-mini)
+    Stage 2: AI Triage        — TriageAgent (Groq llama-3.3-70b)
     Stage 3: Cost Analysis    — CostImpactAgent (OpenCost)
     Stage 4: Notification     — NotificationAgent → Maestro
     Stage 5: Human Approval   — (Simulated in demo)
@@ -54,7 +54,7 @@ class NeuroScaleOpsPipeline:
         results = {"alert_id": alert.id, "stages": {}}
 
         # ── Stage 2: AI Triage ─────────────────────────────────────────────
-        print(f"\n  [STAGE 2] AI Triage (GPT-4o-mini)...")
+        print(f"\n  [STAGE 2] AI Triage (Groq llama-3.3-70b)...")
         triage = self.triage_agent.analyze(alert)
         results["stages"]["triage"] = triage.to_dict()
         print(f"  ✓ Root Cause: {triage.root_cause_type} ({triage.confidence})")

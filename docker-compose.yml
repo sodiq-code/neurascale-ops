@@ -9,7 +9,7 @@ services:
       - "8080:8080"    # API / health checks
     environment:
       - DEMO_MODE=true
-      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - GROQ_API_KEY=${GROQ_API_KEY:-}
       - ARGOCD_SERVER=${ARGOCD_SERVER:-localhost:8080}
       - OPENCOST_URL=http://opencost:9090
       - MAESTRO_WEBHOOK_URL=${MAESTRO_WEBHOOK_URL:-}

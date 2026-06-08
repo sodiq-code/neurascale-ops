@@ -12,7 +12,7 @@
 Design a UiPath Maestro-orchestrated Kubernetes incident response system.
 The system must:
 1. Receive Prometheus Alertmanager webhooks
-2. Use AI (GPT-4o-mini) for root cause analysis
+2. Use AI (llama-3.3-70b-versatile) for root cause analysis
 3. Route through human approval for CRITICAL/HIGH alerts
 4. Execute ArgoCD sync + kubectl remediation
 5. Calculate OpenCost financial impact
@@ -28,24 +28,24 @@ Define the agent boundaries, data flow, and UiPath component mapping.
 After analysis, Claude recommended 5 distinct agents + 1 notification bridge:
 
 1. **DetectorAgent** — Pure normalization, no AI needed. Circuit breaker pattern for dedup.
-2. **TriageAgent** — GPT-4o-mini with structured JSON output. Must be stateless.
+2. **TriageAgent** — llama-3.3-70b-versatile with structured JSON output. Must be stateless.
 3. **RemediationAgent** — Pure executor. Never makes decisions — only executes approved plans.
 4. **CostImpactAgent** — OpenCost query wrapper. Separate concern from triage.
 5. **NotificationAgent** — Thin bridge between coded agents and Agent Builder.
 
-### Key Architecture Decision: Why GPT-4o-mini over GPT-4o?
+### Key Architecture Decision: Why llama-3.3-70b-versatile over GPT-4o?
 
 Claude's reasoning:
 > "For structured JSON output with well-defined schemas (root cause type + actions), 
-> gpt-4o-mini at temperature=0.1 matches gpt-4o quality at 15x lower cost. 
+> llama-3.3-70b-versatile at temperature=0.1 matches llama-3.3-70b-versatile quality at 15x lower cost. 
 > The response_format=json_object mode eliminates hallucination risk on the schema. 
-> Use gpt-4o-mini for this task; reserve gpt-4o for open-ended reasoning if needed."
+> Use llama-3.3-70b-versatile for this task; reserve llama-3.3-70b-versatile for open-ended reasoning if needed."
 
 ### Maestro Stage Mapping
 
 Claude mapped each agent to a Maestro Case stage:
 - S1 (Detect) → Coded Agent (Python SDK)
-- S2 (Triage) → Coded Agent (Python SDK) with OpenAI
+- S2 (Triage) → Coded Agent (Python SDK) with groq
 - S3 (Approve) → UiPath Apps human task
 - S4 (Remediate) → Coded Agent (Python SDK)
 - S5 (Cost) → API Workflow → Coded Agent
@@ -61,7 +61,7 @@ Prometheus ──webhook──→ API Workflow ──→ Maestro Case Created
                                          (normalize alert)
                                               │
                                          S2: Triage
-                                         (GPT-4o-mini)
+                                         (llama-3.3-70b-versatile)
                                          (runbook RAG)
                                               │
                                     ┌─────────┴──────────┐
@@ -93,7 +93,7 @@ Prometheus ──webhook──→ API Workflow ──→ Maestro Case Created
 ## Files Generated in This Session
 - `uipath/maestro_case/case_definition.json` — full 7-stage case definition
 - `agents/detector/detector.py` — normalized alert processing
-- `agents/triage/triage_agent.py` — GPT-4o-mini triage
+- `agents/triage/triage_agent.py` — llama-3.3-70b-versatile triage
 - Initial architecture docs
 
 ## Prompt Iterations

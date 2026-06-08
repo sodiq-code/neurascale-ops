@@ -5,7 +5,7 @@
 [![UiPath AgentHack 2026](https://img.shields.io/badge/UiPath-AgentHack%202026-FF6700?style=for-the-badge&logo=uipath)](https://devpost.com)
 [![Track 1 — Maestro Case](https://img.shields.io/badge/Track%201-Maestro%20Case-1565C0?style=for-the-badge)](https://uipath.com/maestro)
 [![Python 3.11+](https://img.shields.io/badge/Python-3.11+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
-[![GPT-4o-mini](https://img.shields.io/badge/LLM-GPT--4o--mini-412991?style=for-the-badge&logo=openai)](https://openai.com)
+[![Groq llama-3.3-70b](https://img.shields.io/badge/LLM-Groq%20llama--3.3--70b-F55036?style=for-the-badge)](https://groq.com)
 [![Kubernetes](https://img.shields.io/badge/Kubernetes-v1.29-326CE5?style=for-the-badge&logo=kubernetes&logoColor=white)](https://kubernetes.io)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
 
@@ -24,8 +24,8 @@ Prometheus Alert → Maestro Case Created
         │
    ┌────▼────┐    ┌────────┐    ┌──────────┐    ┌───────────┐
    │ Detect  │───▶│ Triage │───▶│ Approval │───▶│ Remediate │
-   │ (coded) │    │  GPT   │    │ UiPath   │    │  ArgoCD   │
-   └─────────┘    │ 4o-mini│    │  Apps    │    │ + kubectl │
+   │ (coded) │    │  Groq  │    │ UiPath   │    │  ArgoCD   │
+   └─────────┘    │llama3.3│    │  Apps    │    │ + kubectl │
                   └────────┘    └──────────┘    └─────┬─────┘
                                                        │
                   ┌───────────┐    ┌────────┐    ┌────▼──────┐
@@ -45,7 +45,7 @@ Prometheus Alert → Maestro Case Created
 | Stage | Name | Component | Description |
 |-------|------|-----------|-------------|
 | S1 | **Detect** | Coded Agent (Python) | Normalize Prometheus webhook → Incident object. Circuit breaker deduplication. |
-| S2 | **Triage** | Coded Agent (Python) | GPT-4o-mini root cause analysis + runbook RAG. Structured JSON output. |
+| S2 | **Triage** | Coded Agent (Python) | Groq llama-3.3-70b-versatile root cause analysis + runbook RAG. Structured JSON output. |
 | S3 | **Approval** | UiPath Apps | Human-in-loop: on-call engineer reviews AI plan before execution. |
 | S4 | **Remediate** | Coded Agent (Python) | ArgoCD sync, kubectl restart, resource patching — all approved actions executed. |
 | S5 | **Cost Impact** | API Workflow + Coded Agent | OpenCost query: current monthly spend + remediation delta. |
@@ -85,7 +85,7 @@ neurascale-ops/
 ├── agents/
 │   ├── detector/          # Stage 1: Prometheus alert normalization
 │   │   └── detector.py
-│   ├── triage/            # Stage 2: GPT-4o-mini root cause analysis
+│   ├── triage/            # Stage 2: Groq llama-3.3-70b-versatile root cause analysis
 │   │   └── triage_agent.py
 │   ├── remediation/       # Stage 4: ArgoCD + kubectl execution
 │   │   └── remediation_agent.py
@@ -147,12 +147,12 @@ streamlit run dashboard/app.py
 # → http://localhost:8501
 ```
 
-### With OpenAI API Key (recommended for judges)
+### With Groq API Key (recommended for judges)
 
 ```bash
 # Edit .env
-echo "OPENAI_API_KEY=sk-your-key" >> .env
-echo "DEMO_MODE=true" >> .env  # still uses simulated K8s, real GPT-4o-mini triage
+echo "GROQ_API_KEY=gsk_your-key" >> .env
+echo "DEMO_MODE=true" >> .env  # still uses simulated K8s, real Groq llama-3.3-70b-versatile triage
 
 bash scripts/demo_run.sh
 ```
@@ -180,7 +180,7 @@ bash scripts/trigger_test.sh all
 
 NeuroScale Ops keeps humans in control for **CRITICAL and HIGH severity incidents**:
 
-1. **Triage Agent** generates remediation plan (GPT-4o-mini, < 5 seconds)
+1. **Triage Agent** generates remediation plan (Groq llama-3.3-70b-versatile, < 5 seconds)
 2. **Slack notification** sent to `#incidents` with plan summary
 3. **UiPath Apps form** opens automatically — shows:
    - AI root cause + confidence level
@@ -223,7 +223,7 @@ This lets engineers make informed decisions: is patching now cheaper than invest
 ## Built With
 
 - **Python 3.11** — Agent runtime
-- **OpenAI GPT-4o-mini** — Root cause analysis (structured JSON mode)
+- **Groq (llama-3.3-70b-versatile)** — Root cause analysis (structured JSON mode)
 - **UiPath Maestro** — Case orchestration
 - **UiPath Coded Agents (Python SDK)** — Agent execution
 - **UiPath Apps** — Human approval forms

@@ -20,10 +20,10 @@
     {
       "id": "stage_2_triage",
       "name": "AI Triage",
-      "description": "Triage Agent (GPT-4o-mini) performs root cause analysis, matches runbook, calculates confidence score.",
+      "description": "Triage Agent (Groq llama-3.3-70b-versatile) performs root cause analysis, matches runbook, calculates confidence score.",
       "type": "coded_agent",
       "agent": "triage_agent",
-      "model": "gpt-4o-mini",
+      "model": "llama-3.3-70b-versatile",
       "inputs": ["alert"],
       "outputs": ["triage_report"],
       "sla_minutes": 2,
@@ -106,11 +106,11 @@
       "auth": "bearer_token",
       "token_env": "ARGOCD_TOKEN"
     },
-    "openai": {
-      "type": "openai",
-      "model": "gpt-4o-mini",
+    "groq": {
+      "type": "groq",
+      "model": "llama-3.3-70b-versatile",
       "auth": "api_key",
-      "key_env": "OPENAI_API_KEY"
+      "key_env": "GROQ_API_KEY"
     }
   },
   "settings": {

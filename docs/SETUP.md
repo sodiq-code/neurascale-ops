@@ -29,7 +29,7 @@ pip install -r requirements.txt
 
 # 4. Configure environment
 cp .env.example .env
-# Edit .env — set DEMO_MODE=true (default), optionally add OPENAI_API_KEY
+# Edit .env — set DEMO_MODE=true (default), optionally add GROQ_API_KEY
 
 # 5. Run full demo pipeline
 python main.py --demo
@@ -54,13 +54,13 @@ Pipeline complete in 0.42s
 
 ---
 
-## With OpenAI GPT-4o-mini (AI Triage Mode)
+## With OpenAI Groq llama-3.3-70b-versatile (AI Triage Mode)
 
 ```bash
 # Add your key to .env
-echo "OPENAI_API_KEY=sk-..." >> .env
+echo "GROQ_API_KEY=gsk_..." >> .env
 
-# Re-run — triage will now use GPT-4o-mini
+# Re-run — triage will now use Groq llama-3.3-70b-versatile
 python main.py --scenario oomkill
 ```
 
@@ -215,7 +215,7 @@ chmod +x scripts/trigger_test.sh
 | Issue | Fix |
 |-------|-----|
 | `ModuleNotFoundError: agents` | Run from repo root: `cd neurascale-ops && python main.py` |
-| OpenAI quota exceeded | Set `OPENAI_API_KEY=""` to use rule-based fallback |
+| OpenAI quota exceeded | Set `GROQ_API_KEY=""` to use rule-based fallback |
 | ArgoCD 401 Unauthorized | Regenerate token: `argocd account generate-token` |
 | Kyverno policies not enforcing | Check Kyverno pod: `kubectl get pods -n kyverno` |
 | K8s connection refused | Verify `KUBECONFIG` path and context |
@@ -231,7 +231,7 @@ Prometheus Alert
  IncidentDetector  ──────►  UiPath Maestro Case
       │                          │
       │                    Stage 1: Detection
-      │                    Stage 2: AI Triage (GPT-4o-mini)
+      │                    Stage 2: AI Triage (Groq llama-3.3-70b-versatile)
       │                    Stage 3: Cost Analysis (OpenCost)
       │                    Stage 4: Human Approval (UiPath Apps)
       │                    Stage 5: Remediation (ArgoCD)

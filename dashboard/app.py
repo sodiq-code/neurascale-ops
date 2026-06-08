@@ -92,7 +92,7 @@ def gen_cost_data():
 
 STAGE_INFO = [
     ("1", "Detection",        "DetectorAgent",     "Watches K8s events, OOMKills, CrashLoops, Kyverno violations"),
-    ("2", "AI Triage",        "TriageAgent",        "GPT-4o-mini root cause analysis + runbook matching"),
+    ("2", "AI Triage",        "TriageAgent",        "Groq llama-3.3-70b root cause analysis + runbook matching"),
     ("3", "Cost Analysis",    "CostImpactAgent",    "OpenCost namespace spend + budget utilisation"),
     ("4", "Human Approval",   "UiPath Apps",        "SRE reviews AI triage + cost context, approves/rejects"),
     ("5", "Remediation",      "RemediationAgent",   "kubectl patch / ArgoCD rollback / Kyverno exception"),
@@ -119,7 +119,7 @@ with st.sidebar:
     st.divider()
     st.markdown("**Stack**")
     st.markdown("""
-- 🤖 GPT-4o-mini (Triage)
+- 🤖 Groq llama-3.3-70b (Triage)
 - ☸️ Kubernetes + KServe
 - 🔒 Kyverno Policies
 - 💰 OpenCost (FinOps)
@@ -226,7 +226,7 @@ with col_detail:
     st.markdown(f"**Alert:** `{active_inc['id']}`")
     st.markdown(f"**Type:** `{active_inc['type']}`")
     st.markdown(f"**Root Cause Analysis:**")
-    st.info(f"GPT-4o-mini classified this as `{active_inc['type']}` with `{active_inc['confidence']}` confidence. Recommended action: `{active_inc['action']}`. Human approval required before execution.")
+    st.info(f"Groq llama-3.3-70b classified this as `{active_inc['type']}` with `{active_inc['confidence']}` confidence. Recommended action: `{active_inc['action']}`. Human approval required before execution.")
 
     st.markdown("**Maestro Stage:** `4 — Human Approval`")
     if st.button("✅ Approve (Demo)", use_container_width=True):

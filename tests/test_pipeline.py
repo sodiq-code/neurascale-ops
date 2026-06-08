@@ -9,7 +9,7 @@ import pytest
 
 # Force demo mode for all tests
 os.environ["DEMO_MODE"] = "true"
-os.environ["OPENAI_API_KEY"] = ""  # ensure rule-based path
+os.environ["GROQ_API_KEY"] = ""  # ensure rule-based path  # ensure rule-based path
 
 from agents.detector.detector import Alert, DetectorAgent, DEMO_SCENARIOS
 from agents.triage.triage_agent import TriageAgent, TriageReport

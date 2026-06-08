@@ -3,8 +3,8 @@ NeuroScale Ops — Triage Agent
 Part of the UiPath Maestro Case pipeline (Stage 2: AI Triage).
 
 Receives an Alert from the Detector, queries local runbook knowledge,
-performs root cause analysis via GPT-4o-mini, and returns a structured
-TriageReport to the Maestro Case for human approval (Stage 3).
+performs root cause analysis via Groq (llama-3.3-70b-versatile), and returns
+a structured TriageReport to the Maestro Case for human approval (Stage 3).
 """
 from __future__ import annotations
 
@@ -15,12 +15,12 @@ from typing import Optional
 from datetime import datetime, timezone
 
 try:
-    from openai import OpenAI
-    OPENAI_AVAILABLE = bool(os.environ.get("OPENAI_API_KEY"))
-    _openai_client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY", "")) if OPENAI_AVAILABLE else None
+    from groq import Groq
+    GROQ_AVAILABLE = bool(os.environ.get("GROQ_API_KEY"))
+    _groq_client = Groq(api_key=os.environ.get("GROQ_API_KEY", "")) if GROQ_AVAILABLE else None
 except ImportError:
-    OPENAI_AVAILABLE = False
-    _openai_client = None
+    GROQ_AVAILABLE = False
+    _groq_client = None
 
 from agents.detector.detector import Alert
 
@@ -114,24 +114,24 @@ def _match_runbook(alert: Alert) -> dict:
 class TriageAgent:
     """
     AI-powered triage agent.
-    Uses GPT-4o-mini for structured reasoning; falls back to rule-based
-    classification when OpenAI is unavailable (demo/offline mode).
+    Uses Groq (llama-3.3-70b-versatile) for structured reasoning; falls back
+    to rule-based classification when Groq is unavailable (demo/offline mode).
     """
 
-    MODEL = "gpt-4o-mini"
+    MODEL = "llama-3.3-70b-versatile"
 
     def analyze(self, alert: Alert) -> TriageReport:
         """Main triage entrypoint. Returns a TriageReport."""
         runbook = _match_runbook(alert)
 
-        if OPENAI_AVAILABLE and _openai_client:
-            return self._gpt_triage(alert, runbook)
+        if GROQ_AVAILABLE and _groq_client:
+            return self._groq_triage(alert, runbook)
         return self._rule_based_triage(alert, runbook)
 
-    # ── GPT-4o-mini path ──────────────────────────────────────────────────────
+    # ── Groq llama-3.3-70b path ───────────────────────────────────────────────
 
-    def _gpt_triage(self, alert: Alert, runbook: dict) -> TriageReport:
-        """Call GPT-4o-mini for structured root cause analysis."""
+    def _groq_triage(self, alert: Alert, runbook: dict) -> TriageReport:
+        """Call Groq llama-3.3-70b-versatile for structured root cause analysis."""
         prompt = f"""You are an expert Kubernetes SRE AI agent performing incident triage.
 Analyze the following alert and the matching runbook. Return ONLY valid JSON.
 
@@ -144,28 +144,28 @@ ALERT:
 - message: {alert.message}
 - raw_data: {json.dumps(alert.raw_data)}
 
-MATCHING RUNBOOK (RB-{runbook['id']}):
+MATCHING RUNBOOK ({runbook['id']}):
 - title: {runbook['title']}
 - recommended_action: {runbook['action']}
 - description: {runbook['description']}
 
-Respond ONLY with this JSON schema:
+Respond ONLY with this exact JSON schema (no markdown, no explanation):
 {{
   "root_cause_type": "OOMKILL|CRASHLOOP|CPU_THROTTLING|POLICY_VIOLATION|COST_SPIKE|DEPLOYMENT_FAILURE",
   "confidence": "HIGH|MEDIUM|LOW",
   "description": "<one-sentence root cause>",
   "recommended_action": "patch_resources|rollback|scale_down|create_exception|monitor|escalate",
   "ai_reasoning": "<2-3 sentences explaining diagnosis and why this action is recommended>",
-  "requires_human_approval": true|false
+  "requires_human_approval": true
 }}"""
 
         try:
-            response = _openai_client.chat.completions.create(
+            response = _groq_client.chat.completions.create(
                 model=self.MODEL,
                 messages=[{"role": "user", "content": prompt}],
-                response_format={"type": "json_object"},
                 temperature=0.1,
                 max_tokens=512,
+                response_format={"type": "json_object"},
             )
             raw = response.choices[0].message.content
             result = json.loads(raw)
@@ -187,7 +187,7 @@ Respond ONLY with this JSON schema:
             )
 
         except Exception as e:
-            print(f"[TriageAgent] GPT call failed: {e} — falling back to rule-based")
+            print(f"[TriageAgent] Groq call failed: {e} — falling back to rule-based")
             return self._rule_based_triage(alert, runbook)
 
     # ── Rule-based fallback ───────────────────────────────────────────────────
@@ -195,11 +195,11 @@ Respond ONLY with this JSON schema:
     def _rule_based_triage(self, alert: Alert, runbook: dict) -> TriageReport:
         """Deterministic triage for demo/offline mode."""
         type_map = {
-            "oomkill": ("OOMKILL", "Container exceeded memory limit and was OOMKilled by the kernel."),
-            "crashloop": ("CRASHLOOP", "Container is crash-looping; likely config error or missing dependency."),
-            "policy_violation": ("POLICY_VIOLATION", "Kyverno admission policy blocked the workload deployment."),
-            "cost_spike": ("COST_SPIKE", "Namespace compute spend exceeded budget threshold by >40%."),
-            "deployment_failure": ("DEPLOYMENT_FAILURE", "Kubernetes deployment rollout failed due to image pull error."),
+            "oomkill":            ("OOMKILL",            "Container exceeded memory limit and was OOMKilled by the kernel."),
+            "crashloop":          ("CRASHLOOP",           "Container is crash-looping; likely config error or missing dependency."),
+            "policy_violation":   ("POLICY_VIOLATION",    "Kyverno admission policy blocked the workload deployment."),
+            "cost_spike":         ("COST_SPIKE",          "Namespace compute spend exceeded budget threshold by >40%."),
+            "deployment_failure": ("DEPLOYMENT_FAILURE",  "Kubernetes deployment rollout failed due to image pull error."),
         }
         rca_type, rca_desc = type_map.get(alert.type, ("UNKNOWN", alert.message))
 

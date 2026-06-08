@@ -28,7 +28,7 @@ Build a production-grade UiPath Maestro-orchestrated Kubernetes incident respons
        ▼
 [UiPath Maestro Case — 7 Stages]
   Stage 1: Detection      — webhook ingest
-  Stage 2: AI Triage      — GPT-4o-mini root cause analysis
+  Stage 2: AI Triage      — llama-3.3-70b-versatile root cause analysis
   Stage 3: Cost Impact    — OpenCost namespace attribution
   Stage 4: Human Approval — UiPath Apps form (HITL gate)
   Stage 5: Remediation    — ArgoCD sync + kubectl patching
@@ -43,7 +43,7 @@ Build a production-grade UiPath Maestro-orchestrated Kubernetes incident respons
 
 #### Core Agents (Python)
 - `agents/detector/detector.py` — Alert dataclass + IncidentDetector with 5 scenario types
-- `agents/triage/triage_agent.py` — GPT-4o-mini triage + rule-based fallback, TriageReport dataclass
+- `agents/triage/triage_agent.py` — llama-3.3-70b-versatile triage + rule-based fallback, TriageReport dataclass
 - `agents/remediation/remediation_agent.py` — ArgoCD sync, kubectl patching, demo dry-run mode
 - `agents/tools/kubernetes_ops.py` — KubernetesOps abstraction layer (real + mock)
 - `agents/cost_impact/cost_agent.py` — OpenCost API integration + cost attribution
@@ -85,13 +85,13 @@ Build a production-grade UiPath Maestro-orchestrated Kubernetes incident respons
 ## Key Design Decisions Made During Session
 
 ### 1. Dual-Mode Architecture (DEMO_MODE / Real Mode)
-**Decision:** All agents support `DEMO_MODE=true` (env var) which bypasses real K8s API calls and OpenAI calls.  
+**Decision:** All agents support `DEMO_MODE=true` (env var) which bypasses real K8s API calls and Groq calls.  
 **Reason:** Hackathon judges need to run the system without a real cluster. Demos must be zero-friction.  
 **Implementation:** Every agent checks `os.environ.get("DEMO_MODE", "false").lower() == "true"` at the top of each method that would make external calls.
 
-### 2. GPT-4o-mini with Rule-Based Fallback
-**Decision:** Use OpenAI GPT-4o-mini for AI triage, but fall back to rule-based logic when no API key is present.  
-**Reason:** Hackathon judges may not have OpenAI keys. The system must always produce output.  
+### 2. llama-3.3-70b-versatile with Rule-Based Fallback
+**Decision:** Use Groq llama-3.3-70b-versatile for AI triage, but fall back to rule-based logic when no API key is present.  
+**Reason:** Hackathon judges may not have Groq keys. The system must always produce output.  
 **Implementation:** `TriageAgent._gpt_triage()` catches all exceptions and calls `_rule_based_triage()` as fallback.
 
 ### 3. TriageReport Carries Alert Context
@@ -131,7 +131,7 @@ This project was bootstrapped from 3 existing NeuroScale projects:
 |--------|-------------|------------|
 | NeuroScale Agents (Google Cloud) | `k8s/policies/`, runbook structure | Ported Kyverno policies to new namespace |
 | NeuroScale Ops Agent (Splunk) | Agent architecture patterns | Replaced Splunk SDK with Prometheus/OpenCost |
-| NeuroScale Autopilot (Qwen Cloud) | Scenario YAMLs, demo patterns | Replaced Qwen LLM with GPT-4o-mini |
+| NeuroScale Autopilot (Qwen Cloud) | Scenario YAMLs, demo patterns | Replaced Qwen LLM with llama-3.3-70b-versatile |
 
 All source files were reviewed at `/home/user/neurascale-source/` and key patterns extracted.
 

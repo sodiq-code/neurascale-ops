@@ -44,11 +44,11 @@ spec:
           env:
             - name: DEMO_MODE
               value: "false"
-            - name: OPENAI_API_KEY
+            - name: GROQ_API_KEY
               valueFrom:
                 secretKeyRef:
                   name: neurascale-ops-secrets
-                  key: openai-api-key
+                  key: groq-api-key
             - name: ARGOCD_SERVER
               valueFrom:
                 configMapKeyRef:

@@ -46,7 +46,7 @@ jobs:
     needs: lint
     env:
       DEMO_MODE: "true"
-      OPENAI_API_KEY: ""       # empty = rule-based fallback, no real API calls
+      GROQ_API_KEY: ""       # empty = rule-based fallback, no real API calls
     steps:
       - uses: actions/checkout@v4
 

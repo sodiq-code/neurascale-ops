@@ -52,7 +52,7 @@
       },
       {
         "id": "ai_analysis",
-        "title": "AI Analysis (GPT-4o-mini)",
+        "title": "AI Analysis (Groq llama-3.3-70b-versatile)",
         "columns": 2,
         "fields": [
           {
