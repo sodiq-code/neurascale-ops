@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #0d1117;
+    color: #c9d1d9;
+    font-family: 'Cascadia Code', 'Fira Code', 'JetBrains Mono', 'Courier New', monospace;
+    font-size: 15px;
+    line-height: 1.55;
+    width: 1920px; min-height: 1080px;
+    padding: 0;
+    overflow: hidden;
+  }
+  .topbar {
+    background: #161b22;
+    border-bottom: 1px solid #30363d;
+    padding: 10px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .dot { width: 13px; height: 13px; border-radius: 50%; }
+  .dot.r { background: #ff5f57; }
+  .dot.y { background: #febc2e; }
+  .dot.g { background: #28c840; }
+  .tab-title {
+    color: #8b949e;
+    font-size: 13px;
+    margin-left: 8px;
+  }
+  .uipath-badge {
+    margin-left: auto;
+    background: #FA4616;
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 3px 10px;
+    border-radius: 4px;
+    letter-spacing: 0.5px;
+  }
+  .content { padding: 28px 40px; }
+  .brand {
+    color: #FA4616;
+    font-size: 28px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    margin-bottom: 2px;
+  }
+  .subtitle {
+    color: #8b949e;
+    font-size: 13px;
+    margin-bottom: 24px;
+  }
+  .cmd { color: #3fb950; }
+  .prompt { color: #79c0ff; }
+  .kw { color: #d2a8ff; }
+  .val { color: #ffa657; }
+  .ok { color: #3fb950; }
+  .warn { color: #e3b341; }
+  .err { color: #f85149; }
+  .dim { color: #8b949e; }
+  .section-hdr {
+    color: #79c0ff;
+    border-bottom: 1px solid #30363d;
+    padding-bottom: 6px;
+    margin: 18px 0 10px 0;
+    font-size: 14px;
+    letter-spacing: 0.5px;
+  }
+  .box {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-left: 3px solid #FA4616;
+    border-radius: 6px;
+    padding: 16px 20px;
+    margin: 10px 0;
+  }
+  .metric-row { display: flex; gap: 32px; margin: 16px 0; flex-wrap: wrap; }
+  .metric {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    padding: 14px 22px;
+    min-width: 200px;
+  }
+  .metric .label { color: #8b949e; font-size: 12px; margin-bottom: 4px; }
+  .metric .value { font-size: 22px; font-weight: bold; }
+  .metric .value.green { color: #3fb950; }
+  .metric .value.yellow { color: #e3b341; }
+  .metric .value.red { color: #f85149; }
+  .metric .value.blue { color: #79c0ff; }
+  .metric .value.orange { color: #ffa657; }
+  table { border-collapse: collapse; width: 100%; margin-top: 12px; }
+  th {
+    background: #161b22;
+    color: #79c0ff;
+    padding: 8px 14px;
+    text-align: left;
+    font-size: 13px;
+    border-bottom: 1px solid #30363d;
+  }
+  td { padding: 7px 14px; border-bottom: 1px solid #21262d; font-size: 13.5px; }
+  tr:last-child td { border-bottom: none; }
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: bold;
+  }
+  .badge.green { background: #1a4731; color: #3fb950; }
+  .badge.yellow { background: #3d2f0a; color: #e3b341; }
+  .badge.red { background: #3d0f0f; color: #f85149; }
+  .badge.blue { background: #0d2137; color: #79c0ff; }
+  .badge.orange { background: #3d2007; color: #ffa657; }
+  pre { font-family: inherit; white-space: pre-wrap; word-break: break-word; }
+  .cursor { 
+    display: inline-block;
+    width: 8px;
+    height: 16px;
+    background: #3fb950;
+    vertical-align: text-bottom;
+    animation: blink 1s step-end infinite;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+</style>
+</head><body>
+<div class="topbar">
+  <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
+  <span class="tab-title">sodiq@neurascale-ops: ~/neurascale-ops</span>
+  <span class="uipath-badge">UiPath AgentHack 2026</span>
+</div>
+<div class="content">
+
+<div class="brand">NeuroScale Ops</div>
+<div class="subtitle">AI-Powered Kubernetes Incident Response · UiPath Maestro Case · Track 1</div>
+
+<div class="box" style="border-left-color:#79c0ff; margin-top:10px;">
+  <pre><span class="dim">The Problem:</span>
+  <span class="err">03:17</span> — OOMKill cascade in production. ML inference service DOWN.
+  <span class="err">03:18</span> — 94 Prometheus alerts fired. PagerDuty calls 3 engineers.
+  <span class="warn">03:45</span> — Root cause identified after reading 6 runbooks manually.
+  <span class="warn">04:02</span> — kubectl patch executed. Waiting for approval over Slack.
+  <span class="ok"> 04:31</span> — Incident resolved. Post-mortem writing begins... manually.
+  
+  <span class="dim">MTTR: </span><span class="err">74 minutes</span><span class="dim">  ·  Engineers paged: </span><span class="err">3</span><span class="dim">  ·  Manual steps: </span><span class="err">23</span></pre>
+</div>
+
+<div style="margin-top: 20px; display: flex; gap: 24px; align-items: center;">
+  <div style="flex:1;">
+    <div class="section-hdr">NeuroScale Ops changes this</div>
+    <pre><span class="ok">  ✓</span>  Detection        <span class="dim">→ DetectorAgent (Kubernetes Events)</span>
+<span class="ok">  ✓</span>  AI Triage        <span class="dim">→ Groq llama-3.3-70b (real LLM, structured JSON)</span>
+<span class="ok">  ✓</span>  Cost Impact      <span class="dim">→ OpenCost API ($$ per incident, $$ per fix)</span>
+<span class="ok">  ✓</span>  Human Approval   <span class="dim">→ UiPath Apps (mobile, 1-tap, 15-min SLA)</span>
+<span class="ok">  ✓</span>  Remediation      <span class="dim">→ ArgoCD rollback · kubectl patch · Kyverno exception</span>
+<span class="ok">  ✓</span>  Post-Mortem      <span class="dim">→ UiPath Document Understanding (auto PDF)</span></pre>
+  </div>
+  <div>
+    <div class="metric-row" style="flex-direction:column; gap:12px;">
+      <div class="metric"><div class="label">MTTR Target</div><div class="value green">&lt; 15 min</div></div>
+      <div class="metric"><div class="label">Human Touch Points</div><div class="value blue">1 click</div></div>
+      <div class="metric"><div class="label">Incident Types</div><div class="value orange">5 covered</div></div>
+    </div>
+  </div>
+</div>
+
+<div style="margin-top:18px;">
+  <span class="prompt">sodiq@neurascale ➜ ~/neurascale-ops</span> <span class="cmd">python main.py</span><span class="cursor"></span>
+</div>
+
+</div>
+</body></html>

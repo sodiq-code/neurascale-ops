@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #0d1117;
+    color: #c9d1d9;
+    font-family: 'Cascadia Code', 'Fira Code', 'JetBrains Mono', 'Courier New', monospace;
+    font-size: 15px;
+    line-height: 1.55;
+    width: 1920px; min-height: 1080px;
+    padding: 0;
+    overflow: hidden;
+  }
+  .topbar {
+    background: #161b22;
+    border-bottom: 1px solid #30363d;
+    padding: 10px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .dot { width: 13px; height: 13px; border-radius: 50%; }
+  .dot.r { background: #ff5f57; }
+  .dot.y { background: #febc2e; }
+  .dot.g { background: #28c840; }
+  .tab-title {
+    color: #8b949e;
+    font-size: 13px;
+    margin-left: 8px;
+  }
+  .uipath-badge {
+    margin-left: auto;
+    background: #FA4616;
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 3px 10px;
+    border-radius: 4px;
+    letter-spacing: 0.5px;
+  }
+  .content { padding: 28px 40px; }
+  .brand {
+    color: #FA4616;
+    font-size: 28px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    margin-bottom: 2px;
+  }
+  .subtitle {
+    color: #8b949e;
+    font-size: 13px;
+    margin-bottom: 24px;
+  }
+  .cmd { color: #3fb950; }
+  .prompt { color: #79c0ff; }
+  .kw { color: #d2a8ff; }
+  .val { color: #ffa657; }
+  .ok { color: #3fb950; }
+  .warn { color: #e3b341; }
+  .err { color: #f85149; }
+  .dim { color: #8b949e; }
+  .section-hdr {
+    color: #79c0ff;
+    border-bottom: 1px solid #30363d;
+    padding-bottom: 6px;
+    margin: 18px 0 10px 0;
+    font-size: 14px;
+    letter-spacing: 0.5px;
+  }
+  .box {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-left: 3px solid #FA4616;
+    border-radius: 6px;
+    padding: 16px 20px;
+    margin: 10px 0;
+  }
+  .metric-row { display: flex; gap: 32px; margin: 16px 0; flex-wrap: wrap; }
+  .metric {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    padding: 14px 22px;
+    min-width: 200px;
+  }
+  .metric .label { color: #8b949e; font-size: 12px; margin-bottom: 4px; }
+  .metric .value { font-size: 22px; font-weight: bold; }
+  .metric .value.green { color: #3fb950; }
+  .metric .value.yellow { color: #e3b341; }
+  .metric .value.red { color: #f85149; }
+  .metric .value.blue { color: #79c0ff; }
+  .metric .value.orange { color: #ffa657; }
+  table { border-collapse: collapse; width: 100%; margin-top: 12px; }
+  th {
+    background: #161b22;
+    color: #79c0ff;
+    padding: 8px 14px;
+    text-align: left;
+    font-size: 13px;
+    border-bottom: 1px solid #30363d;
+  }
+  td { padding: 7px 14px; border-bottom: 1px solid #21262d; font-size: 13.5px; }
+  tr:last-child td { border-bottom: none; }
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: bold;
+  }
+  .badge.green { background: #1a4731; color: #3fb950; }
+  .badge.yellow { background: #3d2f0a; color: #e3b341; }
+  .badge.red { background: #3d0f0f; color: #f85149; }
+  .badge.blue { background: #0d2137; color: #79c0ff; }
+  .badge.orange { background: #3d2007; color: #ffa657; }
+  pre { font-family: inherit; white-space: pre-wrap; word-break: break-word; }
+  .cursor { 
+    display: inline-block;
+    width: 8px;
+    height: 16px;
+    background: #3fb950;
+    vertical-align: text-bottom;
+    animation: blink 1s step-end infinite;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+</style>
+</head><body>
+<div class="topbar">
+  <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
+  <span class="tab-title">sodiq@neurascale-ops: ~/neurascale-ops</span>
+  <span class="uipath-badge">UiPath AgentHack 2026</span>
+</div>
+<div class="content">
+
+<div class="brand">All 5 Scenarios — Pipeline Results</div>
+<div class="subtitle">python main.py --scenario all  ·  Groq AI triage on every incident type</div>
+
+<table style="margin-top:16px;">
+  <tr>
+    <th>Alert ID</th>
+    <th>Incident Type</th>
+    <th>Severity</th>
+    <th>Root Cause (AI)</th>
+    <th>Confidence</th>
+    <th>Remediation</th>
+    <th>Cost Delta</th>
+    <th>Status</th>
+  </tr>
+  <tr>
+    <td style="color:#8b949e">demo-oom-001</td>
+    <td><span class="badge red">OOMKill</span></td>
+    <td><span class="badge red">CRITICAL</span></td>
+    <td>OOMKILL</td>
+    <td><span class="badge green">HIGH</span></td>
+    <td style="color:#ffa657">patch_resources</td>
+    <td style="color:#e3b341">+$15.00/mo</td>
+    <td><span class="badge green">✓ RESOLVED</span></td>
+  </tr>
+  <tr>
+    <td style="color:#8b949e">demo-crash-001</td>
+    <td><span class="badge red">CrashLoop</span></td>
+    <td><span class="badge red">CRITICAL</span></td>
+    <td>CRASHLOOP</td>
+    <td><span class="badge yellow">MEDIUM</span></td>
+    <td style="color:#ffa657">rollback (ArgoCD)</td>
+    <td style="color:#e3b341">+$5.00/mo</td>
+    <td><span class="badge green">✓ RESOLVED</span></td>
+  </tr>
+  <tr>
+    <td style="color:#8b949e">demo-policy-001</td>
+    <td><span class="badge yellow">Policy Violation</span></td>
+    <td><span class="badge yellow">WARNING</span></td>
+    <td>POLICY_VIOLATION</td>
+    <td><span class="badge green">HIGH</span></td>
+    <td style="color:#ffa657">create_exception</td>
+    <td style="color:#3fb950">$0.00/mo</td>
+    <td><span class="badge green">✓ RESOLVED</span></td>
+  </tr>
+  <tr>
+    <td style="color:#8b949e">demo-cost-001</td>
+    <td><span class="badge yellow">Cost Spike</span></td>
+    <td><span class="badge yellow">WARNING</span></td>
+    <td>COST_SPIKE</td>
+    <td><span class="badge green">HIGH</span></td>
+    <td style="color:#ffa657">scale_down</td>
+    <td style="color:#3fb950">-$120.00/mo</td>
+    <td><span class="badge green">✓ RESOLVED</span></td>
+  </tr>
+  <tr>
+    <td style="color:#8b949e">demo-deploy-001</td>
+    <td><span class="badge red">Deploy Failure</span></td>
+    <td><span class="badge red">CRITICAL</span></td>
+    <td>DEPLOYMENT_FAILURE</td>
+    <td><span class="badge green">HIGH</span></td>
+    <td style="color:#ffa657">rollback (ArgoCD)</td>
+    <td style="color:#3fb950">$0.00/mo</td>
+    <td><span class="badge green">✓ RESOLVED</span></td>
+  </tr>
+</table>
+
+<div class="metric-row" style="margin-top:24px;">
+  <div class="metric"><div class="label">Scenarios Handled</div><div class="value green">5 / 5</div></div>
+  <div class="metric"><div class="label">AI Confidence Avg</div><div class="value blue">HIGH</div></div>
+  <div class="metric"><div class="label">Monthly Savings</div><div class="value green">-$120/mo</div></div>
+  <div class="metric"><div class="label">All Resolved</div><div class="value green">✓ 100%</div></div>
+  <div class="metric"><div class="label">LLM</div><div class="value orange">Groq llama-3.3-70b</div></div>
+</div>
+
+</div>
+</body></html>

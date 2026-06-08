@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #0d1117;
+    color: #c9d1d9;
+    font-family: 'Cascadia Code', 'Fira Code', 'JetBrains Mono', 'Courier New', monospace;
+    font-size: 15px;
+    line-height: 1.55;
+    width: 1920px; min-height: 1080px;
+    padding: 0;
+    overflow: hidden;
+  }
+  .topbar {
+    background: #161b22;
+    border-bottom: 1px solid #30363d;
+    padding: 10px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .dot { width: 13px; height: 13px; border-radius: 50%; }
+  .dot.r { background: #ff5f57; }
+  .dot.y { background: #febc2e; }
+  .dot.g { background: #28c840; }
+  .tab-title {
+    color: #8b949e;
+    font-size: 13px;
+    margin-left: 8px;
+  }
+  .uipath-badge {
+    margin-left: auto;
+    background: #FA4616;
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 3px 10px;
+    border-radius: 4px;
+    letter-spacing: 0.5px;
+  }
+  .content { padding: 28px 40px; }
+  .brand {
+    color: #FA4616;
+    font-size: 28px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    margin-bottom: 2px;
+  }
+  .subtitle {
+    color: #8b949e;
+    font-size: 13px;
+    margin-bottom: 24px;
+  }
+  .cmd { color: #3fb950; }
+  .prompt { color: #79c0ff; }
+  .kw { color: #d2a8ff; }
+  .val { color: #ffa657; }
+  .ok { color: #3fb950; }
+  .warn { color: #e3b341; }
+  .err { color: #f85149; }
+  .dim { color: #8b949e; }
+  .section-hdr {
+    color: #79c0ff;
+    border-bottom: 1px solid #30363d;
+    padding-bottom: 6px;
+    margin: 18px 0 10px 0;
+    font-size: 14px;
+    letter-spacing: 0.5px;
+  }
+  .box {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-left: 3px solid #FA4616;
+    border-radius: 6px;
+    padding: 16px 20px;
+    margin: 10px 0;
+  }
+  .metric-row { display: flex; gap: 32px; margin: 16px 0; flex-wrap: wrap; }
+  .metric {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    padding: 14px 22px;
+    min-width: 200px;
+  }
+  .metric .label { color: #8b949e; font-size: 12px; margin-bottom: 4px; }
+  .metric .value { font-size: 22px; font-weight: bold; }
+  .metric .value.green { color: #3fb950; }
+  .metric .value.yellow { color: #e3b341; }
+  .metric .value.red { color: #f85149; }
+  .metric .value.blue { color: #79c0ff; }
+  .metric .value.orange { color: #ffa657; }
+  table { border-collapse: collapse; width: 100%; margin-top: 12px; }
+  th {
+    background: #161b22;
+    color: #79c0ff;
+    padding: 8px 14px;
+    text-align: left;
+    font-size: 13px;
+    border-bottom: 1px solid #30363d;
+  }
+  td { padding: 7px 14px; border-bottom: 1px solid #21262d; font-size: 13.5px; }
+  tr:last-child td { border-bottom: none; }
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: bold;
+  }
+  .badge.green { background: #1a4731; color: #3fb950; }
+  .badge.yellow { background: #3d2f0a; color: #e3b341; }
+  .badge.red { background: #3d0f0f; color: #f85149; }
+  .badge.blue { background: #0d2137; color: #79c0ff; }
+  .badge.orange { background: #3d2007; color: #ffa657; }
+  pre { font-family: inherit; white-space: pre-wrap; word-break: break-word; }
+  .cursor { 
+    display: inline-block;
+    width: 8px;
+    height: 16px;
+    background: #3fb950;
+    vertical-align: text-bottom;
+    animation: blink 1s step-end infinite;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+</style>
+</head><body>
+<div class="topbar">
+  <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
+  <span class="tab-title">sodiq@neurascale-ops: ~/neurascale-ops</span>
+  <span class="uipath-badge">UiPath AgentHack 2026</span>
+</div>
+<div class="content">
+
+<div class="brand">UiPath Maestro Case Definition</div>
+<div class="subtitle">uipath/maestro_case/case_definition.json  ·  Ready to import when Labs access arrives</div>
+
+<div style="display:flex; gap:32px; margin-top:12px;">
+  <div style="flex:1;">
+    <div class="section-hdr">Case Stages</div>
+    <table>
+      <tr><th>#</th><th>Stage Name</th><th>Type</th><th>SLA</th><th>Human Gate</th></tr>
+      <tr><td>1</td><td style='color:#79c0ff'>Incident Detection</td><td style='color:#8b949e'>automated</td><td>—</td><td style='color:#3fb950'>—</td></tr>
+<tr><td>2</td><td style='color:#79c0ff'>AI Triage</td><td style='color:#8b949e'>coded_agent</td><td>—</td><td style='color:#3fb950'>—</td></tr>
+<tr><td>3</td><td style='color:#79c0ff'>Cost Impact Analysis</td><td style='color:#8b949e'>api_workflow</td><td>—</td><td style='color:#3fb950'>—</td></tr>
+<tr><td>4</td><td style='color:#79c0ff'>Human Approval</td><td style='color:#8b949e'>human_in_loop</td><td>—</td><td style='color:#3fb950'>✓</td></tr>
+<tr><td>5</td><td style='color:#79c0ff'>Execute Remediation</td><td style='color:#8b949e'>coded_agent</td><td>—</td><td style='color:#3fb950'>—</td></tr>
+<tr><td>6</td><td style='color:#79c0ff'>Remediation Signoff</td><td style='color:#8b949e'>human_in_loop</td><td>—</td><td style='color:#3fb950'>✓</td></tr>
+<tr><td>7</td><td style='color:#79c0ff'>Post-Mortem & Documentation</td><td style='color:#8b949e'>document_understanding</td><td>—</td><td style='color:#3fb950'>—</td></tr>
+
+    </table>
+
+    <div class="section-hdr" style="margin-top:20px;">Key Design Principles</div>
+    <pre style="font-size:13px;"><span class="ok">  ✓</span>  Every stage has defined input/output data contracts
+<span class="ok">  ✓</span>  Human-in-loop at Stage 4 (approval) and Stage 6 (sign-off)
+<span class="ok">  ✓</span>  15-minute SLA on human approval → auto-escalate if no response
+<span class="ok">  ✓</span>  Circuit-breaker: duplicate alerts deduplicated before routing
+<span class="ok">  ✓</span>  Full audit trail — every stage result logged to Maestro
+<span class="ok">  ✓</span>  UiPath Apps mobile form surfaced to SRE at Stage 4</pre>
+  </div>
+
+  <div style="flex:1;">
+    <div class="section-hdr">UiPath Components Used</div>
+    <pre style="font-size:13px;"><span class="kw">Maestro         </span>  Case orchestration (7 stages)
+<span class="kw">UiPath Apps     </span>  SRE approval form (Stage 4 + 6)
+<span class="kw">Document Und.   </span>  Post-mortem PDF generation (Stage 7)
+<span class="kw">Coded Agents    </span>  Python DetectorAgent + RemediationAgent
+<span class="kw">API Workflows   </span>  OpenCost integration (Stage 3)
+<span class="kw">Webhooks        </span>  Maestro trigger from K8s events</pre>
+
+    <div class="section-hdr" style="margin-top:18px;">MTTR Impact</div>
+    <div class="metric-row" style="flex-direction:column; gap:10px;">
+      <div class="metric">
+        <div class="label">Before NeuroScale Ops</div>
+        <div class="value red">74 min avg MTTR</div>
+      </div>
+      <div class="metric">
+        <div class="label">After NeuroScale Ops</div>
+        <div class="value green">&lt;15 min MTTR</div>
+      </div>
+      <div class="metric">
+        <div class="label">SRE Active Time</div>
+        <div class="value blue">2 min (1 approval tap)</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+</body></html>

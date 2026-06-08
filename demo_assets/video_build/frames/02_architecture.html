@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #0d1117;
+    color: #c9d1d9;
+    font-family: 'Cascadia Code', 'Fira Code', 'JetBrains Mono', 'Courier New', monospace;
+    font-size: 15px;
+    line-height: 1.55;
+    width: 1920px; min-height: 1080px;
+    padding: 0;
+    overflow: hidden;
+  }
+  .topbar {
+    background: #161b22;
+    border-bottom: 1px solid #30363d;
+    padding: 10px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .dot { width: 13px; height: 13px; border-radius: 50%; }
+  .dot.r { background: #ff5f57; }
+  .dot.y { background: #febc2e; }
+  .dot.g { background: #28c840; }
+  .tab-title {
+    color: #8b949e;
+    font-size: 13px;
+    margin-left: 8px;
+  }
+  .uipath-badge {
+    margin-left: auto;
+    background: #FA4616;
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 3px 10px;
+    border-radius: 4px;
+    letter-spacing: 0.5px;
+  }
+  .content { padding: 28px 40px; }
+  .brand {
+    color: #FA4616;
+    font-size: 28px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    margin-bottom: 2px;
+  }
+  .subtitle {
+    color: #8b949e;
+    font-size: 13px;
+    margin-bottom: 24px;
+  }
+  .cmd { color: #3fb950; }
+  .prompt { color: #79c0ff; }
+  .kw { color: #d2a8ff; }
+  .val { color: #ffa657; }
+  .ok { color: #3fb950; }
+  .warn { color: #e3b341; }
+  .err { color: #f85149; }
+  .dim { color: #8b949e; }
+  .section-hdr {
+    color: #79c0ff;
+    border-bottom: 1px solid #30363d;
+    padding-bottom: 6px;
+    margin: 18px 0 10px 0;
+    font-size: 14px;
+    letter-spacing: 0.5px;
+  }
+  .box {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-left: 3px solid #FA4616;
+    border-radius: 6px;
+    padding: 16px 20px;
+    margin: 10px 0;
+  }
+  .metric-row { display: flex; gap: 32px; margin: 16px 0; flex-wrap: wrap; }
+  .metric {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    padding: 14px 22px;
+    min-width: 200px;
+  }
+  .metric .label { color: #8b949e; font-size: 12px; margin-bottom: 4px; }
+  .metric .value { font-size: 22px; font-weight: bold; }
+  .metric .value.green { color: #3fb950; }
+  .metric .value.yellow { color: #e3b341; }
+  .metric .value.red { color: #f85149; }
+  .metric .value.blue { color: #79c0ff; }
+  .metric .value.orange { color: #ffa657; }
+  table { border-collapse: collapse; width: 100%; margin-top: 12px; }
+  th {
+    background: #161b22;
+    color: #79c0ff;
+    padding: 8px 14px;
+    text-align: left;
+    font-size: 13px;
+    border-bottom: 1px solid #30363d;
+  }
+  td { padding: 7px 14px; border-bottom: 1px solid #21262d; font-size: 13.5px; }
+  tr:last-child td { border-bottom: none; }
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: bold;
+  }
+  .badge.green { background: #1a4731; color: #3fb950; }
+  .badge.yellow { background: #3d2f0a; color: #e3b341; }
+  .badge.red { background: #3d0f0f; color: #f85149; }
+  .badge.blue { background: #0d2137; color: #79c0ff; }
+  .badge.orange { background: #3d2007; color: #ffa657; }
+  pre { font-family: inherit; white-space: pre-wrap; word-break: break-word; }
+  .cursor { 
+    display: inline-block;
+    width: 8px;
+    height: 16px;
+    background: #3fb950;
+    vertical-align: text-bottom;
+    animation: blink 1s step-end infinite;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+</style>
+</head><body>
+<div class="topbar">
+  <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
+  <span class="tab-title">sodiq@neurascale-ops: ~/neurascale-ops</span>
+  <span class="uipath-badge">UiPath AgentHack 2026</span>
+</div>
+<div class="content">
+
+<div class="brand">Architecture — 7-Stage Maestro Case</div>
+<div class="subtitle">Every stage maps 1:1 to a UiPath Maestro Case stage with SLA, input/output contracts, and human gates</div>
+
+<div style="display:flex; gap:0; margin-top:8px; align-items:stretch;">
+
+  <div style="flex:1; display:flex; flex-direction:column; gap:8px;">
+    <div class="box" style="padding:10px 14px; border-left-color:#79c0ff;"><span style="color:#79c0ff; font-weight:bold; font-size:12px;">STAGE 1</span><span style="color:#c9d1d9; font-size:13px; margin-left:8px; font-weight:bold;">DetectorAgent</span><div style="color:#8b949e; font-size:12px; margin-top:3px;">Kubernetes event watcher → Alert(id, type, severity, metadata)</div></div><div class="box" style="padding:10px 14px; border-left-color:#3fb950;"><span style="color:#3fb950; font-weight:bold; font-size:12px;">STAGE 2</span><span style="color:#c9d1d9; font-size:13px; margin-left:8px; font-weight:bold;">AI Triage</span><div style="color:#8b949e; font-size:12px; margin-top:3px;">Groq llama-3.3-70b → TriageReport(root_cause, confidence, action, runbook, reasoning)</div></div><div class="box" style="padding:10px 14px; border-left-color:#e3b341;"><span style="color:#e3b341; font-weight:bold; font-size:12px;">STAGE 3</span><span style="color:#c9d1d9; font-size:13px; margin-left:8px; font-weight:bold;">Cost Impact</span><div style="color:#8b949e; font-size:12px; margin-top:3px;">OpenCost API → CostReport(monthly_cost, budget_status, cost_delta)</div></div><div class="box" style="padding:10px 14px; border-left-color:#FA4616;"><span style="color:#FA4616; font-weight:bold; font-size:12px;">STAGE 4</span><span style="color:#c9d1d9; font-size:13px; margin-left:8px; font-weight:bold;">Human Approval</span><div style="color:#8b949e; font-size:12px; margin-top:3px;">UiPath Apps form → SRE sees AI reasoning + cost. 15-min SLA. Auto-escalate.</div></div><div class="box" style="padding:10px 14px; border-left-color:#ffa657;"><span style="color:#ffa657; font-weight:bold; font-size:12px;">STAGE 5</span><span style="color:#c9d1d9; font-size:13px; margin-left:8px; font-weight:bold;">Remediation</span><div style="color:#8b949e; font-size:12px; margin-top:3px;">kubectl patch · argocd rollback · kubectl scale · kubectl apply (Kyverno)</div></div><div class="box" style="padding:10px 14px; border-left-color:#3fb950;"><span style="color:#3fb950; font-weight:bold; font-size:12px;">STAGE 6</span><span style="color:#c9d1d9; font-size:13px; margin-left:8px; font-weight:bold;">Resolution Sign-off</span><div style="color:#8b949e; font-size:12px; margin-top:3px;">UiPath Apps confirmation. Circuit-breaker dedup. Alert closed.</div></div><div class="box" style="padding:10px 14px; border-left-color:#d2a8ff;"><span style="color:#d2a8ff; font-weight:bold; font-size:12px;">STAGE 7</span><span style="color:#c9d1d9; font-size:13px; margin-left:8px; font-weight:bold;">Post-Mortem</span><div style="color:#8b949e; font-size:12px; margin-top:3px;">UiPath Document Understanding → structured PDF filed automatically.</div></div>
+  </div>
+
+  <div style="width:1px; background:#30363d; margin:0 24px;"></div>
+
+  <div style="flex:1;">
+    <div class="section-hdr">Tech Stack</div>
+    <pre style="font-size:13px;"><span class="kw">Orchestration</span>   UiPath Maestro Case (7 stages)
+<span class="kw">AI Engine    </span>   Groq Cloud · llama-3.3-70b-versatile
+<span class="kw">K8s Remediation</span> ArgoCD · kubectl · Kyverno PolicyException
+<span class="kw">Cost FinOps  </span>   OpenCost REST API
+<span class="kw">Human Loop   </span>   UiPath Apps (mobile-first approval)
+<span class="kw">Post-Mortem  </span>   UiPath Document Understanding
+<span class="kw">Runtime      </span>   Python 3.13 · asyncio · pydantic
+<span class="kw">Observability</span>   structlog · structured JSON events
+<span class="kw">Tests        </span>   pytest 17/17 ✓</pre>
+
+    <div class="section-hdr" style="margin-top:18px;">Incident Coverage</div>
+    <table>
+      <tr><th>Type</th><th>Remediation</th><th>Runbook</th></tr>
+      <tr><td><span class="badge red">OOMKill</span></td><td>kubectl patch memory limits</td><td>RB-001</td></tr>
+      <tr><td><span class="badge red">CrashLoop</span></td><td>ArgoCD rollback</td><td>RB-002</td></tr>
+      <tr><td><span class="badge yellow">Policy Violation</span></td><td>Kyverno PolicyException</td><td>RB-003</td></tr>
+      <tr><td><span class="badge yellow">Cost Spike</span></td><td>kubectl scale-down</td><td>RB-004</td></tr>
+      <tr><td><span class="badge red">Deploy Failure</span></td><td>ArgoCD rollback</td><td>RB-005</td></tr>
+    </table>
+  </div>
+</div>
+
+</div>
+</body></html>
