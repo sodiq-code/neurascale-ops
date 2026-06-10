@@ -303,7 +303,7 @@ This lets engineers make informed decisions: is patching now cheaper than invest
 
 ## Team
 
-**Solo: Sodiq Jimoh** — DevOps/Cloud Engineer, Platform Engineering  
+**Solo: Sodiq Jimoh** — Platform Engineer  
 GitHub: [@sodiq-code](https://github.com/sodiq-code) | Devpost: [@sodiqjimoh80](https://devpost.com/sodiqjimoh80)
 
 ---

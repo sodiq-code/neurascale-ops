@@ -220,7 +220,7 @@ neurascale-ops/
 
 ## Built By
 
-**Sodiq Jimoh** — DevOps/Cloud Engineer, Platform Engineering specialist.  
+**Sodiq Jimoh** — Platform Engineer.  
 Active Kubernetes practitioner with production experience in Kyverno, ArgoCD, OpenCost, and Backstage.  
 Previous hackathon submissions: NeuroScale Agents (Google Cloud), NeuroScale Ops Agent (Splunk).
 
