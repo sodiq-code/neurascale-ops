@@ -25,6 +25,23 @@ logger = structlog.get_logger(__name__)
 ARGOCD_SERVER = os.getenv("ARGOCD_SERVER", "localhost:8080")
 ARGOCD_TOKEN = os.getenv("ARGOCD_TOKEN", "")
 
+# ── Blast radius + confidence constants ───────────────────────────────────────
+MIN_SAFE_REPLICAS = 1       # autonomous scale-down must leave at least this many replicas
+MAX_AUTO_MEMORY_GB = 4.0    # patch_resources cap
+
+# Per-action confidence thresholds — different actions need different confidence bars
+ACTION_CONFIDENCE_THRESHOLDS: dict[str, float] = {
+    "patch_resources":  0.75,   # bounded: can only raise limits, capped at MAX_AUTO_MEMORY_GB
+    "rollback":         0.85,   # high bar — rewinding production state
+    "scale_down":       0.85,   # risky — could drop to 0 replicas
+    "create_exception": 0.80,   # policy change, needs careful review
+    "monitor":          0.50,   # no destructive action, low bar
+    "escalate":         0.50,   # handoff only
+}
+CONFIDENCE_STR_TO_FLOAT: dict[str, float] = {
+    "HIGH": 0.90, "MEDIUM": 0.75, "LOW": 0.50,
+}
+
 
 # ── Output schema ─────────────────────────────────────────────────────────────
 
@@ -113,6 +130,33 @@ class RemediationAgent:
                     root_cause=report.root_cause_type)
 
         # Dispatch
+        # ── Per-action confidence threshold check ────────────────────────────────
+        confidence_str = report.confidence if isinstance(report.confidence, str) else str(report.confidence)
+        confidence_float = CONFIDENCE_STR_TO_FLOAT.get(confidence_str.upper(), 0.75)             if isinstance(report.confidence, str) else float(report.confidence)
+        required_confidence = ACTION_CONFIDENCE_THRESHOLDS.get(report.recommended_action, 0.85)
+        if confidence_float < required_confidence:
+            logger.warning(
+                "confidence_threshold_not_met",
+                action=report.recommended_action,
+                confidence=confidence_float,
+                required=required_confidence,
+                alert_id=report.alert_id,
+            )
+            duration = (datetime.now(timezone.utc) - start).total_seconds()
+            return ExecutionResult(
+                alert_id=report.alert_id,
+                action_taken="confidence_gate_blocked",
+                success=False,
+                output="",
+                error=(
+                    f"Confidence gate FAILED: action '{report.recommended_action}' requires "
+                    f"confidence ≥ {required_confidence:.0%}, got {confidence_float:.0%} ({confidence_str}). "
+                    "Escalate to on-call engineer for manual review."
+                ),
+                duration_seconds=round(duration, 2),
+                timestamp=start.isoformat(),
+            )
+
         handlers = {
             "patch_resources": self._patch_resources,
             "rollback": self._argocd_rollback,
@@ -188,13 +232,22 @@ class RemediationAgent:
         return {"success": ok, "output": out, "error": err if not ok else None}
 
     async def _scale_down(self, report: TriageReport) -> dict:
-        """Scale down the highest-cost workload to reduce spend."""
+        """
+        Scale down the highest-cost workload to reduce spend.
+        Blast radius guard: never scales below MIN_SAFE_REPLICAS (1).
+        """
         namespace = getattr(report, "namespace", "ml-workloads")
         resource = report.raw_data.get("top_consumer", "neurascale-inference") if hasattr(report, "raw_data") else "neurascale-inference"
 
-        cmd = ["kubectl", "scale", "deployment", resource, "--replicas=1", "-n", namespace]
+        target_replicas = MIN_SAFE_REPLICAS  # always leave at least 1 replica running
+        cmd = ["kubectl", "scale", "deployment", resource, f"--replicas={target_replicas}", "-n", namespace]
         out, err, ok = await self._run(cmd)
-        return {"success": ok, "output": out, "error": err if not ok else None}
+        return {
+            "success": ok,
+            "output": out,
+            "error": err if not ok else None,
+            "blast_radius_note": f"Scaled to {target_replicas} replica(s) (min safe floor: {MIN_SAFE_REPLICAS})",
+        }
 
     async def _create_kyverno_exception(self, report: TriageReport) -> dict:
         """Create a Kyverno PolicyException for the approved workload."""
