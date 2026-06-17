@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8"/>
+<title>NeuroScale Triage Approval — UiPath Action Center</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  width: 1920px; height: 1080px; overflow: hidden;
+  font-family: 'Segoe UI', 'Inter', sans-serif;
+  background: #f4f5f7;
+}
+
+/* ── UiPath top nav ── */
+.topnav {
+  position: absolute; top: 0; left: 0; right: 0; height: 56px;
+  background: #ffffff;
+  border-bottom: 1px solid #e0e0e0;
+  display: flex; align-items: center; padding: 0 24px; gap: 24px;
+  z-index: 100;
+}
+.topnav-logo { display: flex; align-items: center; gap: 10px; }
+.topnav-logo svg { width: 32px; height: 32px; }
+.topnav-logo-text { font-size: 18px; font-weight: 700; color: #1a1a1a; }
+.topnav-logo-text span { color: #FA4616; }
+.topnav-breadcrumb {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 14px; color: #6b6b6b;
+}
+.topnav-breadcrumb .sep { color: #bbb; }
+.topnav-breadcrumb .current { color: #1a1a1a; font-weight: 600; }
+.topnav-right { margin-left: auto; display: flex; align-items: center; gap: 20px; }
+.topnav-tenant {
+  font-size: 13px; color: #6b6b6b;
+  background: #f4f5f7; border-radius: 20px; padding: 6px 14px;
+  border: 1px solid #e0e0e0;
+}
+.topnav-avatar {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: #FA4616; color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700;
+}
+
+/* ── Left sidebar ── */
+.sidebar {
+  position: absolute; top: 56px; left: 0; bottom: 0; width: 220px;
+  background: #ffffff; border-right: 1px solid #e0e0e0;
+  padding: 20px 0;
+}
+.sidebar-section-label {
+  font-size: 11px; color: #9e9e9e; letter-spacing: 1.5px;
+  text-transform: uppercase; padding: 0 20px; margin-bottom: 8px; margin-top: 16px;
+}
+.sidebar-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 20px; font-size: 14px; color: #4a4a4a; cursor: pointer;
+}
+.sidebar-item:hover { background: #f4f5f7; }
+.sidebar-item.active {
+  background: rgba(250,70,22,0.08);
+  color: #FA4616; font-weight: 600;
+  border-right: 3px solid #FA4616;
+}
+.sidebar-item .dot {
+  width: 8px; height: 8px; border-radius: 50%; background: #FA4616; flex-shrink: 0;
+}
+.sidebar-item .dot-grey { background: #ccc; }
+.sidebar-badge {
+  margin-left: auto; background: #FA4616; color: #fff;
+  font-size: 11px; font-weight: 700; border-radius: 10px;
+  padding: 2px 8px;
+}
+
+/* ── Main content ── */
+.main {
+  position: absolute; top: 56px; left: 220px; right: 0; bottom: 0;
+  overflow: hidden; padding: 32px 40px;
+}
+
+.page-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 24px;
+}
+.page-title { font-size: 22px; font-weight: 700; color: #1a1a1a; }
+.page-subtitle { font-size: 14px; color: #6b6b6b; margin-top: 4px; }
+.status-pill {
+  display: flex; align-items: center; gap: 8px;
+  background: #fff3f0; border: 1px solid rgba(250,70,22,0.3);
+  border-radius: 20px; padding: 8px 20px;
+}
+.status-dot { width: 10px; height: 10px; border-radius: 50%; background: #FA4616;
+  animation: pulse 1.5s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+.status-text { font-size: 13px; color: #FA4616; font-weight: 700; letter-spacing: 0.5px; }
+
+/* ── Two-column layout ── */
+.layout { display: flex; gap: 24px; height: 860px; }
+
+/* Left: incident card */
+.incident-panel {
+  width: 680px; flex-shrink: 0;
+}
+
+.card {
+  background: #ffffff; border-radius: 12px;
+  border: 1px solid #e0e0e0;
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+.card-header {
+  padding: 16px 24px; border-bottom: 1px solid #f0f0f0;
+  display: flex; align-items: center; gap: 12px;
+}
+.card-header-title { font-size: 15px; font-weight: 700; color: #1a1a1a; }
+.card-header-badge {
+  font-size: 11px; font-weight: 700; padding: 3px 10px;
+  border-radius: 4px; text-transform: uppercase; letter-spacing: 0.5px;
+}
+.badge-critical { background: #fff0f0; color: #d32f2f; border: 1px solid #ffcdd2; }
+.badge-ai { background: rgba(250,70,22,0.1); color: #FA4616; border: 1px solid rgba(250,70,22,0.3); }
+.badge-pending { background: #fff8e1; color: #f57c00; border: 1px solid #ffe082; }
+
+.card-body { padding: 20px 24px; }
+
+.field-row { display: flex; margin-bottom: 14px; }
+.field-label { width: 200px; font-size: 13px; color: #9e9e9e; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.5px; padding-top: 2px; flex-shrink: 0; }
+.field-value { font-size: 14px; color: #1a1a1a; font-weight: 500; line-height: 1.5; }
+.field-value.mono { font-family: 'Courier New', monospace; font-size: 13px; color: #5c6bc0; }
+.field-value.critical { color: #d32f2f; font-weight: 700; }
+.field-value.cost { color: #FA4616; font-weight: 800; font-size: 20px; }
+.field-value.green { color: #2e7d32; font-weight: 700; }
+
+.divider { border: none; border-top: 1px solid #f0f0f0; margin: 16px 0; }
+
+/* AI analysis box */
+.ai-box {
+  background: linear-gradient(135deg, #fff8f6 0%, #fff3f0 100%);
+  border: 1px solid rgba(250,70,22,0.2);
+  border-left: 4px solid #FA4616;
+  border-radius: 8px; padding: 16px 20px;
+}
+.ai-box-label { font-size: 11px; color: #FA4616; font-weight: 700;
+  letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 8px; }
+.ai-box-text { font-size: 14px; color: #333; line-height: 1.6; }
+.ai-confidence {
+  display: inline-flex; align-items: center; gap: 6px;
+  margin-top: 10px; background: rgba(250,70,22,0.1);
+  border-radius: 4px; padding: 4px 10px;
+  font-size: 12px; color: #FA4616; font-weight: 700;
+}
+
+/* Right: approval panel */
+.approval-panel { flex: 1; }
+
+/* Stage tracker */
+.stage-tracker { background: #fff; border-radius: 12px; border: 1px solid #e0e0e0; padding: 20px 24px; margin-bottom: 16px; }
+.stage-tracker-title { font-size: 13px; font-weight: 700; color: #9e9e9e;
+  text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px; }
+.stages { display: flex; flex-direction: column; gap: 0; }
+.stage-row { display: flex; align-items: center; gap: 14px; padding: 8px 0; position: relative; }
+.stage-row:not(:last-child)::after {
+  content: ''; position: absolute; left: 13px; top: 36px;
+  width: 2px; height: 16px; background: #e0e0e0;
+}
+.stage-row.done::after { background: #4caf50; }
+.stage-row.active::after { background: #FA4616; }
+.stage-icon {
+  width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 800;
+}
+.stage-icon.done { background: #e8f5e9; color: #2e7d32; border: 2px solid #4caf50; }
+.stage-icon.active { background: rgba(250,70,22,0.15); color: #FA4616; border: 2px solid #FA4616; }
+.stage-icon.pending { background: #f5f5f5; color: #bbb; border: 2px solid #e0e0e0; }
+.stage-name { font-size: 13px; color: #1a1a1a; font-weight: 600; }
+.stage-type { font-size: 11px; color: #9e9e9e; }
+.stage-time { margin-left: auto; font-size: 11px; color: #9e9e9e; font-family: monospace; }
+
+/* Approval form */
+.approval-form {
+  background: #fff; border-radius: 12px;
+  border: 2px solid rgba(250,70,22,0.35);
+  box-shadow: 0 4px 24px rgba(250,70,22,0.08);
+  overflow: hidden;
+}
+.approval-form-header {
+  background: linear-gradient(135deg, rgba(250,70,22,0.08), rgba(250,70,22,0.04));
+  border-bottom: 1px solid rgba(250,70,22,0.2);
+  padding: 18px 24px;
+  display: flex; align-items: center; gap: 12px;
+}
+.approval-form-title { font-size: 16px; font-weight: 800; color: #1a1a1a; }
+.approval-form-sub { font-size: 12px; color: #9e9e9e; margin-top: 2px; }
+
+.approval-form-body { padding: 24px; }
+
+.form-field { margin-bottom: 18px; }
+.form-label { font-size: 12px; font-weight: 700; color: #9e9e9e;
+  text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 6px; }
+.form-input {
+  width: 100%; padding: 10px 14px; border-radius: 8px;
+  border: 1px solid #e0e0e0; font-size: 14px; color: #1a1a1a;
+  background: #fafafa;
+}
+.form-select {
+  width: 100%; padding: 10px 14px; border-radius: 8px;
+  border: 1px solid #e0e0e0; font-size: 14px; color: #1a1a1a;
+  background: #fafafa; appearance: none;
+}
+.form-textarea {
+  width: 100%; padding: 10px 14px; border-radius: 8px;
+  border: 1px solid #e0e0e0; font-size: 13px; color: #1a1a1a;
+  background: #fafafa; height: 72px; resize: none; line-height: 1.5;
+}
+.form-note { font-size: 12px; color: #9e9e9e; margin-top: 4px; }
+
+.checkbox-row { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+.checkbox {
+  width: 18px; height: 18px; border-radius: 4px;
+  border: 2px solid #FA4616; background: rgba(250,70,22,0.1);
+  flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+}
+.checkbox-label { font-size: 13px; color: #333; }
+
+.form-divider { border: none; border-top: 1px solid #f0f0f0; margin: 18px 0; }
+
+.btn-row { display: flex; gap: 14px; }
+.btn {
+  flex: 1; padding: 14px 0; border-radius: 8px; border: none;
+  font-size: 15px; font-weight: 700; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  letter-spacing: 0.3px;
+}
+.btn-approve {
+  background: #FA4616; color: #ffffff;
+  box-shadow: 0 4px 16px rgba(250,70,22,0.35);
+}
+.btn-reject {
+  background: #fff; color: #d32f2f;
+  border: 2px solid #ffcdd2 !important;
+}
+.btn-escalate {
+  background: #fff; color: #5c6bc0;
+  border: 2px solid #c5cae9 !important;
+  flex: 0.6;
+}
+
+/* Assignee row */
+.assignee-row {
+  display: flex; align-items: center; gap: 10px;
+  margin-top: 16px; padding-top: 16px; border-top: 1px solid #f0f0f0;
+}
+.assignee-avatar {
+  width: 30px; height: 30px; border-radius: 50%;
+  background: #FA4616; color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700; flex-shrink: 0;
+}
+.assignee-info { font-size: 12px; }
+.assignee-name { color: #1a1a1a; font-weight: 600; }
+.assignee-role { color: #9e9e9e; }
+.sla-badge {
+  margin-left: auto; display: flex; align-items: center; gap: 6px;
+  background: #fff3f0; border: 1px solid rgba(250,70,22,0.3);
+  border-radius: 6px; padding: 4px 12px; font-size: 12px; font-weight: 700; color: #FA4616;
+}
+</style>
+</head>
+<body>
+
+<!-- Top nav -->
+<div class="topnav">
+  <div class="topnav-logo">
+    <!-- UiPath logo simplified -->
+    <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect width="32" height="32" rx="6" fill="#FA4616"/>
+      <path d="M8 10h16v3H8zM8 14.5h10v3H8zM8 19h16v3H8z" fill="white" opacity="0.9"/>
+    </svg>
+    <span class="topnav-logo-text">UiPath <span>Action Center</span></span>
+  </div>
+  <div class="topnav-breadcrumb">
+    <span>Action Center</span>
+    <span class="sep">›</span>
+    <span>My Tasks</span>
+    <span class="sep">›</span>
+    <span class="current">NeuroScale Triage Approval</span>
+  </div>
+  <div class="topnav-right">
+    <div class="topnav-tenant">afsod / DefaultTenant</div>
+    <div class="topnav-avatar">SJ</div>
+  </div>
+</div>
+
+<!-- Sidebar -->
+<div class="sidebar">
+  <div class="sidebar-section-label">Queues</div>
+  <div class="sidebar-item">
+    <div class="dot dot-grey"></div> All Tasks
+    <span class="sidebar-badge" style="background:#9e9e9e;">3</span>
+  </div>
+  <div class="sidebar-item active">
+    <div class="dot"></div> My Tasks
+    <span class="sidebar-badge">1</span>
+  </div>
+
+  <div class="sidebar-section-label">Filters</div>
+  <div class="sidebar-item"><div class="dot dot-grey"></div> Pending Review</div>
+  <div class="sidebar-item"><div class="dot dot-grey"></div> Completed</div>
+  <div class="sidebar-item"><div class="dot dot-grey"></div> Escalated</div>
+
+  <div class="sidebar-section-label">Processes</div>
+  <div class="sidebar-item"><div class="dot"></div> NeuroScale Ops</div>
+  <div class="sidebar-item"><div class="dot dot-grey"></div> K8s Remediation</div>
+</div>
+
+<!-- Main -->
+<div class="main">
+  <div class="page-header">
+    <div>
+      <div class="page-title">NeuroScale Triage Approval</div>
+      <div class="page-subtitle">Task ID: NSO-2026-0617-001 · Assigned to you · Created 2 min ago</div>
+    </div>
+    <div class="status-pill">
+      <div class="status-dot"></div>
+      <div class="status-text">AWAITING HUMAN APPROVAL</div>
+    </div>
+  </div>
+
+  <div class="layout">
+
+    <!-- Left: incident details -->
+    <div class="incident-panel">
+
+      <!-- Incident Info -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-header-title">Incident Details</div>
+          <div class="card-header-badge badge-critical">P1 — Critical</div>
+        </div>
+        <div class="card-body">
+          <div class="field-row">
+            <div class="field-label">Incident Type</div>
+            <div class="field-value critical">OOMKill Cascade</div>
+          </div>
+          <div class="field-row">
+            <div class="field-label">Affected Pod</div>
+            <div class="field-value mono">payments-api-7d9f4c-xkp2r</div>
+          </div>
+          <div class="field-row">
+            <div class="field-label">Namespace</div>
+            <div class="field-value mono">production</div>
+          </div>
+          <div class="field-row">
+            <div class="field-label">Cluster</div>
+            <div class="field-value mono">neurascale-prod-k8s-01</div>
+          </div>
+          <div class="field-row">
+            <div class="field-label">Detected At</div>
+            <div class="field-value">2026-06-17 · 03:14:22 UTC</div>
+          </div>
+          <div class="field-row">
+            <div class="field-label">Memory Usage</div>
+            <div class="field-value critical">512Mi / 512Mi (100% — hard limit hit)</div>
+          </div>
+          <div class="field-row">
+            <div class="field-label">Restart Count</div>
+            <div class="field-value critical">7 restarts in 12 min</div>
+          </div>
+          <hr class="divider"/>
+          <div class="field-row">
+            <div class="field-label">Proposed Fix</div>
+            <div class="field-value green">Scale memory limit → 768Mi (+50%)</div>
+          </div>
+          <div class="field-row">
+            <div class="field-label">Blast Radius</div>
+            <div class="field-value">1 pod · 0 downstream dependencies flagged</div>
+          </div>
+          <div class="field-row">
+            <div class="field-label">Est. Cost Impact</div>
+            <div class="field-value cost">$2,847 downtime saved</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- AI Recommendation -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-header-title">AI Triage Analysis</div>
+          <div class="card-header-badge badge-ai">llama-3.3-70b · Groq</div>
+        </div>
+        <div class="card-body">
+          <div class="ai-box">
+            <div class="ai-box-label">AI Recommendation</div>
+            <div class="ai-box-text">
+              OOMKill confirmed on <strong>payments-api</strong> pod. Memory limit of 512Mi is consistently 
+              exceeded under peak load. Root cause: uncached DB query loop introduced in deploy 
+              <code style="background:#f0f0f0;padding:1px 5px;border-radius:3px;font-size:12px;">v2.4.1-hotfix</code>. 
+              Recommend increasing limit to <strong>768Mi</strong> (+50%) and adding memory 
+              alert at 80% threshold. Safe to execute — blast radius is isolated to 1 pod.
+            </div>
+            <div class="ai-confidence">✓ Confidence: 94% · Safe to approve</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Right: stage tracker + approval -->
+    <div class="approval-panel">
+
+      <!-- Stage tracker -->
+      <div class="stage-tracker">
+        <div class="stage-tracker-title">Maestro Case Progress</div>
+        <div class="stages">
+          <div class="stage-row done">
+            <div class="stage-icon done">✓</div>
+            <div><div class="stage-name">Incident Detection</div><div class="stage-type">Agentic · completed</div></div>
+            <div class="stage-time">03:14:22</div>
+          </div>
+          <div class="stage-row done">
+            <div class="stage-icon done">✓</div>
+            <div><div class="stage-name">AI Triage</div><div class="stage-type">Agentic · llama-3.3-70b</div></div>
+            <div class="stage-time">03:15:04</div>
+          </div>
+          <div class="stage-row done">
+            <div class="stage-icon done">✓</div>
+            <div><div class="stage-name">Cost Impact Analysis</div><div class="stage-type">API workflow · completed</div></div>
+            <div class="stage-time">03:15:31</div>
+          </div>
+          <div class="stage-row active">
+            <div class="stage-icon active">4</div>
+            <div><div class="stage-name" style="color:#FA4616;">Human Approval</div><div class="stage-type">Awaiting your decision</div></div>
+            <div class="stage-time" style="color:#FA4616;">⏱ 2:14</div>
+          </div>
+          <div class="stage-row pending">
+            <div class="stage-icon pending">5</div>
+            <div><div class="stage-name" style="color:#bbb;">Execute Remediation</div><div class="stage-type">Agentic · pending</div></div>
+            <div class="stage-time">—</div>
+          </div>
+          <div class="stage-row pending">
+            <div class="stage-icon pending">6</div>
+            <div><div class="stage-name" style="color:#bbb;">Remediation Signoff</div><div class="stage-type">Human · pending</div></div>
+            <div class="stage-time">—</div>
+          </div>
+          <div class="stage-row pending">
+            <div class="stage-icon pending">7</div>
+            <div><div class="stage-name" style="color:#bbb;">Post-Mortem &amp; Documentation</div><div class="stage-type">Agentic · pending</div></div>
+            <div class="stage-time">—</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Approval form -->
+      <div class="approval-form">
+        <div class="approval-form-header">
+          <div>
+            <div class="approval-form-title">Remediation Approval Required</div>
+            <div class="approval-form-sub">Review AI recommendation and approve or reject the proposed fix</div>
+          </div>
+          <div class="card-header-badge badge-pending" style="margin-left:auto;">Stage 4 of 7</div>
+        </div>
+        <div class="approval-form-body">
+
+          <div class="form-field">
+            <div class="form-label">Reviewer</div>
+            <div class="form-input" style="background:#f9f9f9;color:#9e9e9e;padding:10px 14px;border-radius:8px;border:1px solid #e0e0e0;font-size:14px;">Sodiq Jimoh — Platform Engineer</div>
+          </div>
+
+          <div class="form-field">
+            <div class="form-label">Decision</div>
+            <select class="form-select">
+              <option selected>✓ Approve — proceed with remediation</option>
+              <option>✗ Reject — do not execute fix</option>
+              <option>↑ Escalate — needs senior review</option>
+            </select>
+          </div>
+
+          <div class="form-field">
+            <div class="form-label">Override Memory Limit (optional)</div>
+            <input class="form-input" type="text" value="768Mi" style="font-family:monospace;"/>
+            <div class="form-note">Leave as AI-recommended value or enter custom limit</div>
+          </div>
+
+          <div class="form-field">
+            <div class="form-label">Reviewer Notes</div>
+            <textarea class="form-textarea">AI analysis verified. Memory limit increase approved. Monitor for 10 min post-remediation.</textarea>
+          </div>
+
+          <div class="checkbox-row">
+            <div class="checkbox">
+              <svg width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4.5L4 7.5L10 1.5" stroke="#FA4616" stroke-width="2" stroke-linecap="round"/></svg>
+            </div>
+            <div class="checkbox-label">I confirm blast radius check — fix is scoped to 1 pod, no downstream impact</div>
+          </div>
+          <div class="checkbox-row">
+            <div class="checkbox">
+              <svg width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4.5L4 7.5L10 1.5" stroke="#FA4616" stroke-width="2" stroke-linecap="round"/></svg>
+            </div>
+            <div class="checkbox-label">I acknowledge this action will be logged and audited in Maestro case NSO-2026-0617-001</div>
+          </div>
+
+          <hr class="form-divider"/>
+
+          <div class="btn-row">
+            <button class="btn btn-approve">✓ Approve Remediation</button>
+            <button class="btn btn-reject">✗ Reject</button>
+            <button class="btn btn-escalate">↑ Escalate</button>
+          </div>
+
+          <div class="assignee-row">
+            <div class="assignee-avatar">SJ</div>
+            <div class="assignee-info">
+              <div class="assignee-name">Sodiq Jimoh</div>
+              <div class="assignee-role">Platform Engineer · DefaultTenant</div>
+            </div>
+            <div class="sla-badge">⏱ SLA: 13 min remaining</div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
