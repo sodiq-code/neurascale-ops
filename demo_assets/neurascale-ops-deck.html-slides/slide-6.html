@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8"/>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { width: 1920px; height: 1080px; overflow: hidden; font-family: 'Inter', 'Segoe UI', sans-serif; }
+.slide {
+  width: 1920px; height: 1080px; overflow: hidden; position: relative;
+  background: #0a0e1a;
+}
+.bg-gradient { position: absolute; inset: 0; background: linear-gradient(160deg, #1a1f35 0%, #0d1226 100%); }
+.top-bar { position: absolute; top: 0; left: 0; width: 1920px; height: 8px; background: linear-gradient(90deg, #FA4616 0%, #ff6b3d 50%, #FA4616 100%); }
+.slide-num { position: absolute; top: 40px; right: 80px; font-size: 18px; color: rgba(255,255,255,0.25); font-weight: 500; }
+.slide-label { position: absolute; top: 40px; left: 80px; font-size: 16px; color: #FA4616; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; }
+.title { position: absolute; top: 90px; left: 80px; font-size: 52px; font-weight: 800; color: #ffffff; letter-spacing: -1px; }
+.title span { color: #FA4616; }
+.subtitle { position: absolute; top: 165px; left: 80px; font-size: 22px; color: #8892b0; }
+
+/* Main screenshot */
+.screenshot-main {
+  position: absolute; top: 220px; left: 80px; width: 1080px; height: 720px;
+  border-radius: 14px; border: 2px solid rgba(250,70,22,0.4);
+  overflow: hidden;
+  box-shadow: 0 0 60px rgba(250,70,22,0.15);
+}
+.screenshot-main img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
+
+.screenshot-badge {
+  position: absolute; top: 220px; left: 80px;
+  background: #FA4616; color: #fff; font-size: 13px; font-weight: 700;
+  padding: 6px 18px; border-radius: 0 0 10px 0; letter-spacing: 1px; text-transform: uppercase;
+  z-index: 10;
+}
+
+/* Side panel */
+.side-panel { position: absolute; top: 220px; left: 1200px; width: 650px; }
+
+.stage-list { margin-bottom: 20px; }
+.stage-item {
+  display: flex; align-items: center; gap: 18px;
+  padding: 16px 20px; border-radius: 10px; margin-bottom: 10px;
+  border: 1px solid rgba(255,255,255,0.07);
+  background: rgba(255,255,255,0.04);
+}
+.stage-num {
+  width: 36px; height: 36px; border-radius: 50%; border: 2px solid;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 800; flex-shrink: 0;
+}
+.stage-num.agentic { border-color: #FA4616; color: #FA4616; background: rgba(250,70,22,0.1); }
+.stage-num.human { border-color: #58a6ff; color: #58a6ff; background: rgba(88,166,255,0.1); }
+.stage-num.api { border-color: #d29922; color: #d29922; background: rgba(210,153,34,0.1); }
+.stage-name { font-size: 15px; font-weight: 600; color: #e6edf3; }
+.stage-type { font-size: 12px; color: #8892b0; margin-top: 3px; }
+
+.legend { display: flex; gap: 16px; margin-bottom: 20px; }
+.legend-item { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #8892b0; }
+.legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+
+.proof-box {
+  background: rgba(250,70,22,0.06); border: 1px solid rgba(250,70,22,0.25);
+  border-radius: 12px; padding: 20px 22px; margin-top: 6px;
+}
+.proof-title { font-size: 13px; color: #FA4616; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px; }
+.proof-row { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 6px; }
+.proof-key { color: #8892b0; }
+.proof-val { color: #3fb950; font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="slide">
+  <div class="bg-gradient"></div>
+  <div class="top-bar"></div>
+  <div class="slide-num">06 / 08</div>
+  <div class="slide-label">Maestro Live</div>
+  <div class="title">UiPath <span>Maestro</span> Case — Published</div>
+  <div class="subtitle">7-stage agentic workflow · Published v1.0.0 · DefaultTenant · June 17 2026</div>
+
+  <!-- Screenshot -->
+  <div class="screenshot-main">
+    <img src="/home/user/neurascale-ops/demo_assets/screenshots/uipath/maestro_7stages_clean.png" alt="UiPath Maestro 7 Stages">
+  </div>
+  <div class="screenshot-badge">LIVE — cloud.uipath.com/afsod</div>
+
+  <!-- Side panel -->
+  <div class="side-panel">
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:#FA4616;"></div>Agentic Process</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#58a6ff;"></div>Human Action</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#d29922;"></div>API Workflow</div>
+    </div>
+
+    <div class="stage-list">
+      <div class="stage-item">
+        <div class="stage-num agentic">1</div>
+        <div><div class="stage-name">Incident Detection</div><div class="stage-type">Agentic process</div></div>
+      </div>
+      <div class="stage-item">
+        <div class="stage-num agentic">2</div>
+        <div><div class="stage-name">AI Triage</div><div class="stage-type">Agentic process · llama-3.3-70b via Groq</div></div>
+      </div>
+      <div class="stage-item">
+        <div class="stage-num api">3</div>
+        <div><div class="stage-name">Cost Impact Analysis</div><div class="stage-type">API workflow</div></div>
+      </div>
+      <div class="stage-item">
+        <div class="stage-num human">4</div>
+        <div><div class="stage-name">Human Approval</div><div class="stage-type">Human action — ops team gate</div></div>
+      </div>
+      <div class="stage-item">
+        <div class="stage-num agentic">5</div>
+        <div><div class="stage-name">Execute Remediation</div><div class="stage-type">Agentic process · blast-radius guard</div></div>
+      </div>
+      <div class="stage-item">
+        <div class="stage-num human">6</div>
+        <div><div class="stage-name">Remediation Signoff</div><div class="stage-type">Human action</div></div>
+      </div>
+      <div class="stage-item">
+        <div class="stage-num agentic">7</div>
+        <div><div class="stage-name">Post-Mortem &amp; Documentation</div><div class="stage-type">Agentic process</div></div>
+      </div>
+    </div>
+
+    <div class="proof-box">
+      <div class="proof-title">On-Chain Proof</div>
+      <div class="proof-row"><span class="proof-key">Published by</span><span class="proof-val">Sodiq Jimoh</span></div>
+      <div class="proof-row"><span class="proof-key">Version</span><span class="proof-val">1.0.0</span></div>
+      <div class="proof-row"><span class="proof-key">Tenant</span><span class="proof-val">DefaultTenant</span></div>
+      <div class="proof-row"><span class="proof-key">Date</span><span class="proof-val">June 17, 2026</span></div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

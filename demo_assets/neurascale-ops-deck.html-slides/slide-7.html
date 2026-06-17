@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8"/>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { width: 1920px; height: 1080px; overflow: hidden; font-family: 'Inter', 'Segoe UI', sans-serif; }
+.slide {
+  width: 1920px; height: 1080px; overflow: hidden; position: relative;
+  background: #0a0e1a;
+}
+.bg-gradient { position: absolute; inset: 0; background: linear-gradient(160deg, #1a1f35 0%, #0d1226 100%); }
+.top-bar { position: absolute; top: 0; left: 0; width: 1920px; height: 8px; background: linear-gradient(90deg, #FA4616 0%, #ff6b3d 50%, #FA4616 100%); }
+.slide-num { position: absolute; top: 40px; right: 80px; font-size: 18px; color: rgba(255,255,255,0.25); font-weight: 500; }
+.slide-label { position: absolute; top: 40px; left: 80px; font-size: 16px; color: #FA4616; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; }
+.title { position: absolute; top: 90px; left: 80px; font-size: 52px; font-weight: 800; color: #ffffff; letter-spacing: -1px; }
+.title span { color: #FA4616; }
+.subtitle { position: absolute; top: 165px; left: 80px; font-size: 22px; color: #8892b0; }
+
+.bonus-tag {
+  position: absolute; top: 95px; right: 80px;
+  background: linear-gradient(135deg, #FA4616, #ff6b3d);
+  color: #fff; font-size: 15px; font-weight: 800; letter-spacing: 2px;
+  padding: 8px 22px; border-radius: 30px; text-transform: uppercase;
+}
+
+/* Session cards */
+.sessions-grid { position: absolute; top: 220px; left: 80px; width: 1760px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+
+.session-card {
+  background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.09);
+  border-radius: 16px; padding: 28px 28px;
+  border-top: 3px solid;
+}
+.session-card.s1 { border-top-color: #FA4616; }
+.session-card.s2 { border-top-color: #58a6ff; }
+.session-card.s3 { border-top-color: #3fb950; }
+
+.session-id { font-size: 12px; color: #8892b0; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; font-family: 'SF Mono', monospace; }
+.session-title { font-size: 22px; font-weight: 800; color: #e6edf3; margin-bottom: 6px; }
+.session-desc { font-size: 15px; color: #8892b0; margin-bottom: 20px; line-height: 1.6; }
+
+.task-list { margin-bottom: 20px; }
+.task-item { display: flex; align-items: flex-start; gap: 10px; font-size: 14px; color: rgba(255,255,255,0.65); margin-bottom: 9px; line-height: 1.5; }
+.task-icon { color: #3fb950; font-size: 13px; margin-top: 2px; flex-shrink: 0; }
+
+.session-stats { display: flex; gap: 16px; margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.07); }
+.stat { text-align: center; }
+.stat-val { font-size: 22px; font-weight: 800; }
+.stat-label { font-size: 12px; color: #8892b0; margin-top: 3px; }
+.s1 .stat-val { color: #FA4616; }
+.s2 .stat-val { color: #58a6ff; }
+.s3 .stat-val { color: #3fb950; }
+
+.terminal-snippet {
+  background: #0d1117; border-radius: 10px; padding: 16px 18px; margin-top: 16px;
+  font-family: 'SF Mono', 'Consolas', monospace; font-size: 12px; line-height: 1.8;
+  border: 1px solid rgba(255,255,255,0.07);
+}
+.ts-cmd { color: #58a6ff; }
+.ts-out { color: #3fb950; }
+.ts-dim { color: rgba(255,255,255,0.35); }
+
+/* Bottom */
+.bottom-bar {
+  position: absolute; bottom: 48px; left: 80px; right: 80px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.bottom-note { font-size: 16px; color: #8892b0; }
+.bottom-note strong { color: #FA4616; }
+.docs-link { font-size: 14px; color: #58a6ff; font-family: 'SF Mono', monospace; }
+</style>
+</head>
+<body>
+<div class="slide">
+  <div class="bg-gradient"></div>
+  <div class="top-bar"></div>
+  <div class="slide-num">07 / 08</div>
+  <div class="slide-label">AI-Assisted Development</div>
+  <div class="title">Built with <span>Claude Code</span></div>
+  <div class="subtitle">3 documented AI-pair-programming sessions · transparent &amp; reproducible development</div>
+  <div class="bonus-tag">Bonus Track</div>
+
+  <div class="sessions-grid">
+    <!-- Session 1 -->
+    <div class="session-card s1">
+      <div class="session-id">Session 001 · June 15 2026</div>
+      <div class="session-title">Core Pipeline Architecture</div>
+      <div class="session-desc">Scaffolding the multi-agent system from scratch with safety-first design</div>
+      <div class="task-list">
+        <div class="task-item"><span class="task-icon">✓</span>Agent interface design (DetectorAgent, TriageAgent, RemediationAgent)</div>
+        <div class="task-item"><span class="task-icon">✓</span>Groq LLM integration + fallback rule-based triage</div>
+        <div class="task-item"><span class="task-icon">✓</span>Async pipeline orchestration with structured logging</div>
+        <div class="task-item"><span class="task-icon">✓</span>Pydantic models for all inter-agent data contracts</div>
+      </div>
+      <div class="terminal-snippet">
+        <div class="ts-cmd">$ DEMO_MODE=true python main.py</div>
+        <div class="ts-out">✓ DetectorAgent initialized</div>
+        <div class="ts-out">✓ TriageAgent ready (llama-3.3-70b)</div>
+        <div class="ts-dim">… pipeline scaffolded</div>
+      </div>
+      <div class="session-stats">
+        <div class="stat"><div class="stat-val">4</div><div class="stat-label">Agents Built</div></div>
+        <div class="stat"><div class="stat-val">~2h</div><div class="stat-label">Session Time</div></div>
+        <div class="stat"><div class="stat-val">847</div><div class="stat-label">Lines Generated</div></div>
+      </div>
+    </div>
+
+    <!-- Session 2 -->
+    <div class="session-card s2">
+      <div class="session-id">Session 002 · June 16 2026</div>
+      <div class="session-title">Safety Guardrails &amp; Tests</div>
+      <div class="session-desc">Adding production-grade safety mechanisms and full test coverage</div>
+      <div class="task-list">
+        <div class="task-item"><span class="task-icon">✓</span>MIN_SAFE_REPLICAS blast-radius guard implementation</div>
+        <div class="task-item"><span class="task-icon">✓</span>Per-action confidence threshold gates</div>
+        <div class="task-item"><span class="task-icon">✓</span>pytest suite: test_pipeline.py + test_safety.py (15 tests)</div>
+        <div class="task-item"><span class="task-icon">✓</span>Dry-run mode for safe pre-flight validation</div>
+      </div>
+      <div class="terminal-snippet">
+        <div class="ts-cmd">$ pytest tests/ -v</div>
+        <div class="ts-out">✓ 15 passed in 2.14s</div>
+        <div class="ts-out">BlastRadiusGuard: ACTIVE</div>
+        <div class="ts-dim">ConfidenceThreshold: ENFORCED</div>
+      </div>
+      <div class="session-stats">
+        <div class="stat"><div class="stat-val">15</div><div class="stat-label">Tests Written</div></div>
+        <div class="stat"><div class="stat-val">~90min</div><div class="stat-label">Session Time</div></div>
+        <div class="stat"><div class="stat-val">2</div><div class="stat-label">Guard Systems</div></div>
+      </div>
+    </div>
+
+    <!-- Session 3 -->
+    <div class="session-card s3">
+      <div class="session-id">Session 003 · June 17 2026</div>
+      <div class="session-title">UiPath Integration &amp; Demo</div>
+      <div class="session-desc">Wiring Maestro Webhooks, CostImpact API, and demo asset generation</div>
+      <div class="task-list">
+        <div class="task-item"><span class="task-icon">✓</span>Maestro webhook handler for live case triggering</div>
+        <div class="task-item"><span class="task-icon">✓</span>CostImpactAgent with real Groq LLM estimation</div>
+        <div class="task-item"><span class="task-icon">✓</span>NotificationAgent with Slack-style structured output</div>
+        <div class="task-item"><span class="task-icon">✓</span>Demo video script &amp; presentation assets</div>
+      </div>
+      <div class="terminal-snippet">
+        <div class="ts-cmd">$ DEMO_MODE=false python main.py</div>
+        <div class="ts-out">✓ Groq API: LIVE (llama-3.3-70b)</div>
+        <div class="ts-out">✓ Maestro case: Published v1.0.0</div>
+        <div class="ts-dim">Cost saved: $2,847/incident</div>
+      </div>
+      <div class="session-stats">
+        <div class="stat"><div class="stat-val">3</div><div class="stat-label">Integrations</div></div>
+        <div class="stat"><div class="stat-val">~3h</div><div class="stat-label">Session Time</div></div>
+        <div class="stat"><div class="stat-val">LIVE</div><div class="stat-label">API Status</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bottom-bar">
+    <div class="bottom-note">All sessions documented with prompts, diffs &amp; outputs — <strong>transparent AI-assisted development</strong></div>
+    <div class="docs-link">docs/coding-agents/claude-sessions/README.md</div>
+  </div>
+</div>
+</body>
+</html>

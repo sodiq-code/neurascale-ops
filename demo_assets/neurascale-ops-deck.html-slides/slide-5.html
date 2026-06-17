@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8"/>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { width: 1920px; height: 1080px; overflow: hidden; font-family: 'Inter', 'Segoe UI', sans-serif; }
+.slide {
+  width: 1920px; height: 1080px; overflow: hidden; position: relative;
+  background: #0a0e1a;
+}
+.bg-gradient { position: absolute; inset: 0; background: linear-gradient(160deg, #1a1f35 0%, #0d1226 100%); }
+.top-bar { position: absolute; top: 0; left: 0; width: 1920px; height: 8px; background: linear-gradient(90deg, #FA4616 0%, #ff6b3d 50%, #FA4616 100%); }
+.slide-num { position: absolute; top: 40px; right: 80px; font-size: 18px; color: rgba(255,255,255,0.25); font-weight: 500; }
+.slide-label { position: absolute; top: 40px; left: 80px; font-size: 16px; color: #FA4616; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; }
+.title { position: absolute; top: 90px; left: 80px; font-size: 52px; font-weight: 800; color: #ffffff; letter-spacing: -1px; }
+.title span { color: #FA4616; }
+.subtitle { position: absolute; top: 165px; left: 80px; font-size: 22px; color: #8892b0; }
+
+/* Terminal block */
+.terminal {
+  position: absolute; top: 220px; left: 80px; width: 940px; height: 800px;
+  background: #0d1117; border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.1);
+  overflow: hidden;
+}
+.terminal-bar {
+  height: 44px; background: #1c2333; display: flex; align-items: center;
+  padding: 0 20px; gap: 10px; border-bottom: 1px solid rgba(255,255,255,0.07);
+}
+.dot { width: 14px; height: 14px; border-radius: 50%; }
+.dot-red { background: #ff5f56; }
+.dot-yellow { background: #ffbd2e; }
+.dot-green { background: #27c93f; }
+.term-title { margin-left: 12px; color: rgba(255,255,255,0.4); font-size: 14px; font-family: 'SF Mono', 'Consolas', monospace; }
+.terminal-body { padding: 24px 28px; font-family: 'SF Mono', 'Consolas', monospace; font-size: 14px; line-height: 2; }
+.t-cmd { color: #58a6ff; }
+.t-pass { color: #3fb950; }
+.t-fail { color: #f85149; }
+.t-warn { color: #d29922; }
+.t-dim { color: rgba(255,255,255,0.3); }
+.t-white { color: #e6edf3; }
+.t-orange { color: #FA4616; }
+.t-section { color: #79c0ff; font-weight: 700; }
+.t-dot-pass { color: #3fb950; font-size: 16px; }
+
+/* Right panel */
+.right-panel { position: absolute; top: 220px; left: 1080px; width: 760px; }
+
+.metric-card {
+  background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 14px; padding: 32px 36px; margin-bottom: 24px;
+}
+.metric-label { font-size: 14px; color: #8892b0; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 12px; }
+.metric-value { font-size: 64px; font-weight: 800; color: #3fb950; letter-spacing: -2px; }
+.metric-sub { font-size: 16px; color: rgba(255,255,255,0.45); margin-top: 6px; }
+
+.test-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+.test-item {
+  background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px; padding: 20px 22px;
+}
+.test-item-name { font-size: 13px; color: #8892b0; margin-bottom: 8px; }
+.test-item-val { font-size: 28px; font-weight: 800; }
+.green { color: #3fb950; }
+.orange { color: #FA4616; }
+.blue { color: #58a6ff; }
+
+.coverage-bar-wrap { margin-top: 6px; }
+.coverage-bar-bg { background: rgba(255,255,255,0.08); border-radius: 4px; height: 8px; width: 100%; }
+.coverage-bar-fill { height: 8px; border-radius: 4px; background: linear-gradient(90deg, #FA4616, #ff6b3d); }
+
+.badge-row { display: flex; gap: 12px; margin-top: 4px; flex-wrap: wrap; }
+.badge {
+  background: rgba(63,185,80,0.15); border: 1px solid rgba(63,185,80,0.3);
+  border-radius: 20px; padding: 6px 16px; font-size: 13px; color: #3fb950; font-weight: 600;
+}
+.badge-blue { background: rgba(88,166,255,0.12); border-color: rgba(88,166,255,0.3); color: #58a6ff; }
+.badge-orange { background: rgba(250,70,22,0.12); border-color: rgba(250,70,22,0.3); color: #FA4616; }
+
+.safety-box {
+  background: rgba(250,70,22,0.06); border: 1px solid rgba(250,70,22,0.2);
+  border-radius: 14px; padding: 22px 28px;
+}
+.safety-title { font-size: 14px; color: #FA4616; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 12px; }
+.safety-item { font-size: 15px; color: rgba(255,255,255,0.7); margin-bottom: 8px; padding-left: 20px; position: relative; }
+.safety-item::before { content: "✓"; position: absolute; left: 0; color: #3fb950; font-weight: 700; }
+</style>
+</head>
+<body>
+<div class="slide">
+  <div class="bg-gradient"></div>
+  <div class="top-bar"></div>
+  <div class="slide-num">05 / 08</div>
+  <div class="slide-label">Quality & Safety</div>
+  <div class="title">Tests, Guards &amp; <span>Reliability</span></div>
+  <div class="subtitle">pytest suite · safety guardrails · zero-trust remediation</div>
+
+  <!-- Terminal -->
+  <div class="terminal">
+    <div class="terminal-bar">
+      <div class="dot dot-red"></div>
+      <div class="dot dot-yellow"></div>
+      <div class="dot dot-green"></div>
+      <div class="term-title">pytest — neurascale-ops/tests/</div>
+    </div>
+    <div class="terminal-body">
+      <div class="t-cmd">$ pytest tests/ -v --tb=short 2>&amp;1</div>
+      <br>
+      <div class="t-section">===== test session starts =====</div>
+      <div class="t-white">platform linux — Python 3.11 — pytest 8.x</div>
+      <div class="t-white">rootdir: /neurascale-ops</div>
+      <br>
+      <div class="t-section">tests/test_pipeline.py</div>
+      <div class="t-pass">  PASSED  tests/test_pipeline.py::TestDetectorAgent::test_demo_scenarios_exist</div>
+      <div class="t-pass">  PASSED  tests/test_pipeline.py::TestDetectorAgent::test_alert_model</div>
+      <div class="t-pass">  PASSED  tests/test_pipeline.py::TestDetectorAgent::test_all_scenarios_valid</div>
+      <div class="t-pass">  PASSED  tests/test_pipeline.py::TestDetectorAgent::test_detector_agent_emit</div>
+      <div class="t-pass">  PASSED  tests/test_pipeline.py::TestTriageAgent::test_demo_triage_output</div>
+      <div class="t-pass">  PASSED  tests/test_pipeline.py::TestTriageAgent::test_triage_severity_mapping</div>
+      <div class="t-pass">  PASSED  tests/test_pipeline.py::TestCostAgent::test_cost_report_structure</div>
+      <div class="t-pass">  PASSED  tests/test_pipeline.py::TestRemediationAgent::test_dry_run_safe</div>
+      <div class="t-pass">  PASSED  tests/test_pipeline.py::TestRemediationAgent::test_full_pipeline_integration</div>
+      <br>
+      <div class="t-section">tests/test_safety.py</div>
+      <div class="t-pass">  PASSED  tests/test_safety.py::TestBlastRadiusGuard::test_min_replicas_enforced</div>
+      <div class="t-pass">  PASSED  tests/test_safety.py::TestBlastRadiusGuard::test_scale_down_blocked_below_min</div>
+      <div class="t-pass">  PASSED  tests/test_safety.py::TestConfidenceThreshold::test_low_confidence_blocked</div>
+      <div class="t-pass">  PASSED  tests/test_safety.py::TestConfidenceThreshold::test_high_confidence_allowed</div>
+      <div class="t-pass">  PASSED  tests/test_safety.py::TestConfidenceThreshold::test_patch_resources_threshold</div>
+      <br>
+      <div class="t-pass" style="font-size:16px; font-weight:700;">✓ 15 passed in 2.14s</div>
+    </div>
+  </div>
+
+  <!-- Right panel -->
+  <div class="right-panel">
+    <div class="metric-card" style="display:flex; align-items:center; gap: 48px; margin-bottom:20px;">
+      <div>
+        <div class="metric-label">Tests Passing</div>
+        <div class="metric-value">15/15</div>
+        <div class="metric-sub">100% pass rate</div>
+      </div>
+      <div style="flex:1;">
+        <div class="metric-label">Test Suites</div>
+        <div style="font-size: 18px; color: #e6edf3; margin-top: 8px; line-height: 2.2;">
+          <span style="color:#3fb950;">●</span> test_pipeline.py — 9 tests<br>
+          <span style="color:#3fb950;">●</span> test_safety.py — 6 tests
+        </div>
+      </div>
+    </div>
+
+    <div class="test-grid">
+      <div class="test-item">
+        <div class="test-item-name">Blast Radius Guard</div>
+        <div class="test-item-val green">ACTIVE</div>
+        <div style="font-size:13px; color:#8892b0; margin-top:6px;">MIN_SAFE_REPLICAS = 2</div>
+      </div>
+      <div class="test-item">
+        <div class="test-item-name">Confidence Gate</div>
+        <div class="test-item-val green">ACTIVE</div>
+        <div style="font-size:13px; color:#8892b0; margin-top:6px;">Per-action thresholds</div>
+      </div>
+      <div class="test-item">
+        <div class="test-item-name">Demo Mode</div>
+        <div class="test-item-val blue">SAFE</div>
+        <div style="font-size:13px; color:#8892b0; margin-top:6px;">No live cluster ops</div>
+      </div>
+      <div class="test-item">
+        <div class="test-item-name">Runtime</div>
+        <div class="test-item-val orange">2.14s</div>
+        <div style="font-size:13px; color:#8892b0; margin-top:6px;">Full suite</div>
+      </div>
+    </div>
+
+    <div class="safety-box">
+      <div class="safety-title">Safety Guardrails</div>
+      <div class="safety-item">Scale-down blocked below MIN_SAFE_REPLICAS threshold</div>
+      <div class="safety-item">Low-confidence AI actions require human approval gate</div>
+      <div class="safety-item">Dry-run mode tested before any live execution</div>
+      <div class="safety-item">All remediation actions require Maestro Human Action sign-off</div>
+    </div>
+
+    <div class="badge-row" style="margin-top: 20px;">
+      <div class="badge">✓ pytest 15/15</div>
+      <div class="badge-blue badge">zero-trust</div>
+      <div class="badge-orange badge">blast-radius guard</div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

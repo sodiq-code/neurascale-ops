@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8"/>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { width: 1920px; height: 1080px; overflow: hidden; font-family: 'Inter', 'Segoe UI', sans-serif; }
+.slide {
+  width: 1920px; height: 1080px; overflow: hidden; position: relative;
+  background: #0a0e1a;
+}
+.bg-gradient { position: absolute; inset: 0; background: linear-gradient(160deg, #1a1f35 0%, #0d1226 100%); }
+
+/* Orange glow bottom */
+.glow { position: absolute; bottom: -200px; left: 50%; transform: translateX(-50%); width: 1400px; height: 500px; background: radial-gradient(ellipse, rgba(250,70,22,0.12) 0%, transparent 70%); }
+
+.top-bar { position: absolute; top: 0; left: 0; width: 1920px; height: 8px; background: linear-gradient(90deg, #FA4616 0%, #ff6b3d 50%, #FA4616 100%); }
+.slide-num { position: absolute; top: 40px; right: 80px; font-size: 18px; color: rgba(255,255,255,0.25); font-weight: 500; }
+.slide-label { position: absolute; top: 40px; left: 80px; font-size: 16px; color: #FA4616; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; }
+
+/* Center layout */
+.center-block { position: absolute; top: 90px; left: 50%; transform: translateX(-50%); text-align: center; width: 1400px; }
+.tagline { font-size: 18px; color: #FA4616; font-weight: 700; letter-spacing: 4px; text-transform: uppercase; margin-bottom: 20px; }
+.main-title { font-size: 80px; font-weight: 900; color: #ffffff; letter-spacing: -3px; line-height: 1.0; margin-bottom: 16px; }
+.main-title span { color: #FA4616; }
+.main-sub { font-size: 24px; color: #8892b0; line-height: 1.6; }
+
+/* Metrics row */
+.metrics-row { position: absolute; top: 430px; left: 80px; right: 80px; display: flex; gap: 24px; }
+.metric-big {
+  flex: 1; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 16px; padding: 30px 20px; text-align: center;
+  border-top: 3px solid rgba(250,70,22,0.5);
+}
+.metric-big-val { font-size: 56px; font-weight: 900; color: #FA4616; letter-spacing: -2px; }
+.metric-big-label { font-size: 16px; color: rgba(255,255,255,0.5); margin-top: 8px; }
+.metric-big-sub { font-size: 13px; color: #8892b0; margin-top: 4px; }
+
+/* Stack row */
+.stack-row { position: absolute; top: 700px; left: 80px; right: 80px; }
+.stack-title { font-size: 14px; color: #8892b0; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 20px; }
+.stack-chips { display: flex; gap: 16px; flex-wrap: wrap; }
+.chip {
+  padding: 10px 24px; border-radius: 30px; font-size: 15px; font-weight: 700;
+  letter-spacing: 1px; text-transform: uppercase;
+}
+.chip-orange { background: rgba(250,70,22,0.15); border: 1px solid rgba(250,70,22,0.4); color: #FA4616; }
+.chip-blue { background: rgba(88,166,255,0.1); border: 1px solid rgba(88,166,255,0.3); color: #58a6ff; }
+.chip-green { background: rgba(63,185,80,0.1); border: 1px solid rgba(63,185,80,0.3); color: #3fb950; }
+.chip-dim { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: rgba(255,255,255,0.5); }
+
+/* CTA */
+.cta-block { position: absolute; bottom: 60px; left: 50%; transform: translateX(-50%); text-align: center; }
+.cta-text { font-size: 20px; color: rgba(255,255,255,0.4); margin-bottom: 14px; }
+.cta-links { display: flex; gap: 36px; justify-content: center; }
+.cta-link { font-size: 16px; font-family: 'SF Mono', monospace; color: #58a6ff; text-decoration: none; }
+.cta-link.main { color: #FA4616; font-weight: 700; font-size: 18px; }
+
+/* Hackathon badge */
+.hackathon-badge {
+  position: absolute; top: 90px; right: 80px;
+  text-align: center;
+}
+.hb-label { font-size: 12px; color: #8892b0; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
+.hb-name { font-size: 18px; font-weight: 800; color: #ffffff; }
+.hb-track { font-size: 14px; color: #FA4616; margin-top: 4px; }
+.hb-deadline { font-size: 13px; color: #8892b0; margin-top: 4px; }
+</style>
+</head>
+<body>
+<div class="slide">
+  <div class="bg-gradient"></div>
+  <div class="glow"></div>
+  <div class="top-bar"></div>
+  <div class="slide-num">08 / 08</div>
+  <div class="slide-label">Impact &amp; Closing</div>
+
+  <div class="hackathon-badge">
+    <div class="hb-label">Submitted to</div>
+    <div class="hb-name">UiPath AgentHack 2026</div>
+    <div class="hb-track">Track 1 — Maestro Case</div>
+    <div class="hb-deadline">Deadline: June 30, 2026</div>
+  </div>
+
+  <div class="center-block">
+    <div class="tagline">NeuroScale Ops</div>
+    <div class="main-title">AI That Fixes<br><span>Infra Before</span><br>You Wake Up</div>
+    <div class="main-sub">Fully agentic K8s incident response — detect, triage, cost-model,<br>get approval, remediate, document. All in under 5 minutes.</div>
+  </div>
+
+  <!-- Metrics -->
+  <div class="metrics-row">
+    <div class="metric-big">
+      <div class="metric-big-val">95%</div>
+      <div class="metric-big-label">MTTR Reduction</div>
+      <div class="metric-big-sub">45 min → &lt; 2 min per incident</div>
+    </div>
+    <div class="metric-big">
+      <div class="metric-big-val">$2,847</div>
+      <div class="metric-big-label">Avg Cost Saved</div>
+      <div class="metric-big-sub">Per OOMKill incident resolved</div>
+    </div>
+    <div class="metric-big">
+      <div class="metric-big-val">3</div>
+      <div class="metric-big-label">Incident Types</div>
+      <div class="metric-big-sub">OOMKill · CPU Throttle · Crashloop</div>
+    </div>
+    <div class="metric-big">
+      <div class="metric-big-val">7</div>
+      <div class="metric-big-label">Maestro Stages</div>
+      <div class="metric-big-sub">Published v1.0.0 · Live today</div>
+    </div>
+    <div class="metric-big">
+      <div class="metric-big-val">15/15</div>
+      <div class="metric-big-label">Tests Passing</div>
+      <div class="metric-big-sub">Safety guards + integration suite</div>
+    </div>
+  </div>
+
+  <!-- Stack -->
+  <div class="stack-row">
+    <div class="stack-title">Full Stack</div>
+    <div class="stack-chips">
+      <div class="chip chip-orange">UiPath Maestro</div>
+      <div class="chip chip-blue">Groq llama-3.3-70b</div>
+      <div class="chip chip-green">Python Agents</div>
+      <div class="chip chip-orange">Agentic Process</div>
+      <div class="chip chip-blue">Human-in-Loop</div>
+      <div class="chip chip-green">pytest 15/15</div>
+      <div class="chip chip-dim">Kubernetes</div>
+      <div class="chip chip-dim">Claude Code</div>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta-block">
+    <div class="cta-text">Open source · documented · built for production</div>
+    <div class="cta-links">
+      <div class="cta-link main">github.com/sodiq-code/neurascale-ops</div>
+      <div class="cta-link">cloud.uipath.com/afsod</div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
