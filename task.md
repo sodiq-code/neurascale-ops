@@ -1,38 +1,43 @@
-# NeuroScale Ops Build Progress
+# NeuroScale Ops — Task Tracker
+Updated: June 17, 2026
 
-## STATUS: IN PROGRESS
+## STATUS
 
-## DONE
-- [x] GitHub repo created: https://github.com/sodiq-code/neurascale-ops
-- [x] Directory structure created
-- [x] agents/detector/detector.py
-- [x] agents/triage/triage_agent.py
-- [x] agents/remediation/remediation_agent.py
-- [x] agents/cost_impact/cost_agent.py
-- [x] agents/notification/notification_agent.py
-- [x] agents/tools/kubernetes_ops.py
-- [x] uipath/maestro_case/case_definition.json
-- [x] uipath/api_workflows/prometheus_webhook.yaml
-- [x] uipath/api_workflows/argocd_trigger.yaml
+### ✅ DONE
+- [x] Maestro case published v1.0.0 to DefaultTenant (June 17 2026)
+- [x] 6 real UiPath screenshots copied to `demo_assets/screenshots/uipath/`
+- [x] All 8 slides built and rendered (slides 1-8 in html-slides/rendered/)
+- [x] seg06_maestro replaced with real UiPath screenshot video (zoom pan, 20s)
+- [x] Final video rebuilt: `neurascale_ops_demo_FINAL.mp4` = 4:51 (under 5min ✓)
+- [x] Claude Code sessions README in docs/coding-agents/claude-sessions/
+- [x] Committed to local git (commits: 8449e80, 0bd3acf)
 
-## TODO
-- [ ] uipath/api_workflows/opencost_query.yaml
-- [ ] uipath/agent_builder/notification_agent.json
-- [ ] uipath/apps/triage_approval_form.json
-- [ ] uipath/apps/remediation_approval_form.json
-- [ ] uipath/apps/signoff_form.json
-- [ ] k8s/ manifests (base, policies, scenarios)
-- [ ] runbooks/ JSON files
-- [ ] dashboard/app.py
-- [ ] scripts/demo_run.sh + trigger_test.sh
-- [ ] docs/SETUP.md
-- [ ] docs/coding-agents/claude-sessions/ (Claude Code docs)
-- [ ] .env.example
-- [ ] requirements.txt
-- [ ] docker-compose.yml
-- [ ] Dockerfile
-- [ ] __init__.py files in each agent folder
-- [ ] README.md (elite, judges-facing)
-- [ ] docs/DEVPOST_SUBMISSION.md
-- [ ] Architecture diagram PNG
-- [ ] Git push everything
+### ⏳ PENDING (waiting for GitHub token)
+- [ ] Push commits to github.com/sodiq-code/neurascale-ops
+  - Need GitHub PAT with repo scope
+
+### 🔴 TODO HIGH
+- [ ] Run real `python main.py` with Groq (DEMO_MODE=false) — capture terminal as video
+  - `cd /home/user/neurascale-ops && GROQ_API_KEY=gsk_... DEMO_MODE=false python main.py`
+- [ ] UiPath Apps form: go to cloud.uipath.com/afsod → Apps → "NeuroScale Triage Approval"
+  - Screenshot the form → use as evidence in video/slides
+- [ ] Add SLA timers to Maestro stages:
+  - S1=1min, S2=2min, S3=1min, S4=15min, S5=3min, S6=5min, S7=2min
+- [ ] Update Devpost submission with real Maestro screenshot
+
+### 🟡 TODO MEDIUM  
+- [ ] Fill UiPath Product Feedback form ($1,500 separate prize)
+- [ ] Forum engagement post for People's Choice
+
+## KEY DETAILS
+- Hackathon: UiPath AgentHack 2026, Track 1 Maestro Case, deadline June 30 2026
+- Devpost: NOT DoraHacks
+- UiPath org: afsod (personal, NOT hackathon26_581)
+- Groq key: gsk_REDACTED_USE_ENV_VAR
+- Video: neurascale_ops_demo_FINAL.mp4 = 4:51 ✓
+
+## FILES
+- Slides: demo_assets/neurascale-ops-deck.html-slides/
+- Screenshots: demo_assets/screenshots/uipath/
+- Video: demo_assets/neurascale_ops_demo_FINAL.mp4
+- Segments: demo_assets/video_build/sections_trimmed/
