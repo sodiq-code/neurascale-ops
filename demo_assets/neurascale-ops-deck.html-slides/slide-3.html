@@ -19,40 +19,52 @@ body { width: 1920px; height: 1080px; overflow: hidden; font-family: 'Inter', 'S
 .title span { color: #FA4616; }
 .subtitle { position: absolute; top: 198px; left: 80px; font-size: 20px; color: #8892b0; }
 
-/* Architecture image */
-.arch-image {
-  position: absolute; top: 220px; left: 80px; width: 760px; height: 780px;
-  object-fit: contain; object-position: top left;
-  border-radius: 10px;
-  border: 1px solid rgba(255,255,255,0.08);
+/* Left: approval screenshot */
+.approval-screenshot {
+  position: absolute; top: 230px; left: 80px; width: 820px; height: 760px;
+  border-radius: 12px;
+  border: 2px solid rgba(250,70,22,0.35);
+  box-shadow: 0 0 48px rgba(250,70,22,0.12);
+  overflow: hidden;
+}
+.approval-screenshot img { width: 100%; height: 100%; object-fit: cover; object-position: top left; }
+.approval-screenshot-badge {
+  position: absolute; top: 230px; left: 80px;
+  background: #FA4616; color: #fff; font-size: 12px; font-weight: 700;
+  padding: 5px 16px; border-radius: 0 0 8px 0; letter-spacing: 1px; text-transform: uppercase; z-index: 10;
 }
 
 /* Right: component breakdown */
 .components {
-  position: absolute; top: 220px; left: 900px; width: 960px;
+  position: absolute; top: 220px; left: 960px; width: 890px;
 }
 .comp-title {
-  font-size: 20px; color: #8892b0; font-weight: 500;
-  letter-spacing: 2px; text-transform: uppercase; margin-bottom: 30px;
+  font-size: 18px; color: #8892b0; font-weight: 500;
+  letter-spacing: 2px; text-transform: uppercase; margin-bottom: 20px;
 }
 
 .comp-item {
-  display: flex; align-items: flex-start; gap: 24px; margin-bottom: 24px;
-  padding: 20px 24px;
+  display: flex; align-items: flex-start; gap: 18px; margin-bottom: 16px;
+  padding: 16px 20px;
   background: rgba(255,255,255,0.03);
   border: 1px solid rgba(255,255,255,0.07);
   border-radius: 10px;
   border-left: 3px solid rgba(250,70,22,0.4);
 }
-.comp-icon {
-  font-size: 28px; flex-shrink: 0; margin-top: 2px;
+.comp-item.highlight {
+  background: rgba(250,70,22,0.06);
+  border: 1px solid rgba(250,70,22,0.25);
+  border-left: 3px solid #FA4616;
 }
-.comp-text .name { font-size: 20px; color: #ffffff; font-weight: 700; margin-bottom: 6px; }
-.comp-text .desc { font-size: 16px; color: #8892b0; line-height: 1.5; }
+.comp-icon {
+  font-size: 24px; flex-shrink: 0; margin-top: 2px;
+}
+.comp-text .name { font-size: 17px; color: #ffffff; font-weight: 700; margin-bottom: 4px; }
+.comp-text .desc { font-size: 14px; color: #8892b0; line-height: 1.45; }
 .comp-text .tag { 
-  display: inline-block; margin-top: 8px;
+  display: inline-block; margin-top: 6px;
   background: rgba(250,70,22,0.15); border: 1px solid rgba(250,70,22,0.3);
-  color: #FA4616; font-size: 13px; font-weight: 600; padding: 3px 12px; border-radius: 4px;
+  color: #FA4616; font-size: 12px; font-weight: 600; padding: 2px 10px; border-radius: 4px;
 }
 </style>
 </head>
@@ -65,7 +77,11 @@ body { width: 1920px; height: 1080px; overflow: hidden; font-family: 'Inter', 'S
   <div class="title">How <span>NeuroScale Ops</span><br/>Works End-to-End</div>
   <div class="subtitle">7 stages. 5 agents. Full automation with human oversight.</div>
 
-  <img src="assets/architecture.png" class="arch-image" alt="Architecture"/>
+  <!-- Approval form screenshot (left) -->
+  <div class="approval-screenshot">
+    <img src="assets/real_uipath/approval_form_real.png" alt="UiPath Action Center — Human Approval"/>
+  </div>
+  <div class="approval-screenshot-badge">LIVE — Action Center · Stage 4</div>
 
   <div class="components">
     <div class="comp-title">UiPath Component Mapping</div>
@@ -74,7 +90,7 @@ body { width: 1920px; height: 1080px; overflow: hidden; font-family: 'Inter', 'S
       <div class="comp-icon">🔍</div>
       <div class="comp-text">
         <div class="name">Stages 1–2: Detect + AI Triage</div>
-        <div class="desc">Python Coded Agent monitors Prometheus alerts. Groq llama-3.3-70b-versatile performs root cause analysis with structured JSON output and rule-based fallback.</div>
+        <div class="desc">Python Coded Agent monitors Prometheus. Groq llama-3.3-70b performs root cause analysis with structured JSON output and rule-based fallback.</div>
         <div class="tag">Coded Agent + API Workflow</div>
       </div>
     </div>
@@ -83,17 +99,17 @@ body { width: 1920px; height: 1080px; overflow: hidden; font-family: 'Inter', 'S
       <div class="comp-icon">💰</div>
       <div class="comp-text">
         <div class="name">Stage 3: Cost Impact Analysis</div>
-        <div class="desc">OpenCost API Workflow calculates namespace-level spend, remediation cost delta, and budget utilization before any human sees the request.</div>
+        <div class="desc">OpenCost API Workflow calculates namespace spend, remediation delta, and budget utilization before any human sees the request.</div>
         <div class="tag">UiPath Integration Service</div>
       </div>
     </div>
 
-    <div class="comp-item">
+    <div class="comp-item highlight">
       <div class="comp-icon">👤</div>
       <div class="comp-text">
-        <div class="name">Stages 4 + 6: Human-in-the-Loop</div>
-        <div class="desc">UiPath Apps forms surface AI reasoning + cost data to the SRE. One-click approval gates with 15-minute SLA escalation and full role-based assignment.</div>
-        <div class="tag">UiPath Apps + Maestro HITL</div>
+        <div class="name">Stages 4 + 6: Human-in-the-Loop ← shown left</div>
+        <div class="desc">Action Center surfaces AI reasoning, cost data, and blast radius to the SRE. Approve / Reject / Escalate with 15-min SLA gate and full audit trail.</div>
+        <div class="tag">Maestro HITL · afsod / DefaultTenant</div>
       </div>
     </div>
 
@@ -101,7 +117,7 @@ body { width: 1920px; height: 1080px; overflow: hidden; font-family: 'Inter', 'S
       <div class="comp-icon">⚡</div>
       <div class="comp-text">
         <div class="name">Stage 5: Autonomous Remediation</div>
-        <div class="desc">ArgoCD rollback, kubectl patch, scale-down, or Kyverno exception — circuit breaker prevents runaway loops. Zero manual kubectl required.</div>
+        <div class="desc">kubectl patch, scale-down, ArgoCD rollback — circuit breaker prevents runaway loops. Zero manual commands required after approval.</div>
         <div class="tag">Coded Agent + ArgoCD API</div>
       </div>
     </div>
@@ -110,7 +126,7 @@ body { width: 1920px; height: 1080px; overflow: hidden; font-family: 'Inter', 'S
       <div class="comp-icon">📄</div>
       <div class="comp-text">
         <div class="name">Stage 7: Post-Mortem Generation</div>
-        <div class="desc">Document Understanding auto-generates a structured post-mortem PDF with timeline, root cause, cost impact, and runbook update recommendations.</div>
+        <div class="desc">Document Understanding auto-generates a structured PDF: timeline, root cause, cost impact, runbook update. Attached to every case automatically.</div>
         <div class="tag">Document Understanding</div>
       </div>
     </div>

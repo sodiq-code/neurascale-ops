@@ -3,7 +3,7 @@ file '/home/user/neurascale-ops/demo_assets/video_build/sections_trimmed/seg02_a
 file '/home/user/neurascale-ops/demo_assets/video_build/sections_trimmed/seg03a_detect.mp4'
 file '/home/user/neurascale-ops/demo_assets/video_build/sections_trimmed/seg03b_triage.mp4'
 file '/home/user/neurascale-ops/demo_assets/video_build/sections_trimmed/seg03c_cost.mp4'
-file '/home/user/neurascale-ops/demo_assets/video_build/sections_trimmed/seg03d_approval.mp4'
+file '/home/user/neurascale-ops/demo_assets/video_build/sections_trimmed/seg03d_approval_REAL.mp4'
 file '/home/user/neurascale-ops/demo_assets/video_build/sections_trimmed/seg03e_remediation.mp4'
 file '/home/user/neurascale-ops/demo_assets/video_build/sections_trimmed/seg03f_postmortem.mp4'
 file '/home/user/neurascale-ops/demo_assets/video_build/sections_trimmed/seg04_allscenarios.mp4'
