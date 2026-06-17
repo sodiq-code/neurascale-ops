@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8"/>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { width: 1920px; height: 1080px; overflow: hidden; font-family: 'Inter', 'Segoe UI', sans-serif; }
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&display=swap');
+
+.slide {
+  width: 1920px; height: 1080px; overflow: hidden; position: relative;
+  background: #0a0e1a;
+}
+
+/* Left accent panel */
+.left-panel {
+  position: absolute; left: 0; top: 0; width: 680px; height: 1080px;
+  background: linear-gradient(160deg, #1a1f35 0%, #0d1226 100%);
+  border-right: 2px solid #FA4616;
+}
+
+/* Subtle grid pattern on left */
+.grid-bg {
+  position: absolute; top: 0; left: 0; width: 680px; height: 1080px;
+  background-image: 
+    linear-gradient(rgba(250,70,22,0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(250,70,22,0.06) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+
+/* Right content area */
+.right-panel {
+  position: absolute; left: 720px; top: 0; width: 1200px; height: 1080px;
+}
+
+/* Track badge top-right */
+.track-badge {
+  position: absolute; top: 60px; right: 80px;
+  background: rgba(250,70,22,0.15);
+  border: 1px solid rgba(250,70,22,0.4);
+  border-radius: 6px;
+  padding: 10px 24px;
+  color: #FA4616;
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+/* UiPath logo top-left */
+.uipath-logo {
+  position: absolute; top: 60px; left: 60px;
+  width: 180px; opacity: 0.9;
+}
+
+/* Main title in left panel */
+.main-title {
+  position: absolute; left: 60px; top: 220px; width: 560px;
+}
+
+.main-title .brand {
+  font-size: 62px; font-weight: 900; color: #ffffff;
+  letter-spacing: -1px; line-height: 1;
+}
+.main-title .brand span { color: #FA4616; }
+
+.main-title .sub {
+  font-size: 26px; font-weight: 400; color: #8892b0;
+  margin-top: 20px; line-height: 1.5;
+}
+
+/* Tagline */
+.tagline {
+  position: absolute; left: 60px; top: 520px; width: 560px;
+  font-size: 20px; color: #ccd6f6; font-weight: 400;
+  line-height: 1.7;
+  border-left: 3px solid #FA4616;
+  padding-left: 24px;
+}
+
+/* Author / event info */
+.meta {
+  position: absolute; left: 60px; bottom: 80px;
+  color: #8892b0; font-size: 18px; line-height: 1.8;
+}
+.meta .author { color: #ccd6f6; font-weight: 600; font-size: 20px; }
+
+/* Right: Architecture diagram area */
+.right-content {
+  position: absolute; right: 60px; top: 80px; width: 1100px; height: 940px;
+}
+
+/* Stage flow visualization */
+.stage-flow {
+  position: absolute; top: 100px; left: 0; width: 1100px;
+}
+
+.stage-title {
+  font-size: 22px; color: #8892b0; font-weight: 500;
+  margin-bottom: 40px; letter-spacing: 2px; text-transform: uppercase;
+}
+
+.stages {
+  display: flex; gap: 0; align-items: center;
+}
+
+.stage-box {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 10px;
+  padding: 24px 18px;
+  text-align: center;
+  width: 140px; flex-shrink: 0;
+}
+.stage-box .num {
+  font-size: 13px; color: #FA4616; font-weight: 700;
+  margin-bottom: 8px; letter-spacing: 1px;
+}
+.stage-box .name {
+  font-size: 15px; color: #ccd6f6; font-weight: 600; line-height: 1.3;
+}
+.stage-box .type {
+  font-size: 12px; color: #8892b0; margin-top: 8px;
+}
+.stage-box.active {
+  border-color: rgba(250,70,22,0.5);
+  background: rgba(250,70,22,0.08);
+}
+
+.arrow {
+  color: rgba(250,70,22,0.6); font-size: 24px; flex-shrink: 0;
+  padding: 0 8px;
+}
+
+/* Stats row */
+.stats-row {
+  position: absolute; top: 440px; left: 0; display: flex; gap: 40px;
+}
+
+.stat {
+  text-align: center;
+}
+.stat .num { font-size: 56px; font-weight: 900; color: #FA4616; line-height: 1; }
+.stat .label { font-size: 18px; color: #8892b0; margin-top: 8px; }
+
+/* Incident types */
+.incidents {
+  position: absolute; top: 640px; left: 0; width: 1100px;
+}
+.incidents .heading { font-size: 18px; color: #8892b0; margin-bottom: 20px; letter-spacing: 1px; text-transform: uppercase; }
+
+.incident-tags {
+  display: flex; gap: 16px; flex-wrap: wrap;
+}
+.tag {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 8px;
+  padding: 12px 22px;
+  font-size: 17px; color: #ccd6f6; font-weight: 500;
+}
+.tag.orange { border-color: rgba(250,70,22,0.35); color: #FA4616; }
+
+/* UiPath Maestro AgentHack badge */
+.hackathon-badge {
+  position: absolute; bottom: 80px; left: 0;
+  background: rgba(250,70,22,0.1);
+  border: 1px solid rgba(250,70,22,0.3);
+  border-radius: 8px;
+  padding: 14px 28px;
+  font-size: 18px; color: #FA4616; font-weight: 600;
+}
+</style>
+</head>
+<body>
+<section class="slide" style="width:1920px;height:1080px;overflow:hidden;position:relative;">
+
+  <div class="left-panel">
+    <div class="grid-bg"></div>
+  </div>
+
+  <img src="assets/uipath_logo.png" class="uipath-logo" alt="UiPath"/>
+
+  <div class="track-badge">Track 1 — Maestro Case</div>
+
+  <div class="main-title">
+    <div class="brand">Neuro<span>Scale</span><br/>Ops</div>
+    <div class="sub">AI-Powered Kubernetes<br/>Incident Response</div>
+  </div>
+
+  <div class="tagline">
+    From alert to resolution in under 15 minutes — zero manual kubectl, full audit trail, orchestrated by UiPath Maestro.
+  </div>
+
+  <div class="meta">
+    <div class="author">Sodiq Jimoh (afsod)</div>
+    UiPath AgentHack 2026 · Solo submission
+  </div>
+
+  <div class="right-content">
+    <div class="stage-flow">
+      <div class="stage-title">7-Stage Maestro Case</div>
+      <div class="stages">
+        <div class="stage-box active">
+          <div class="num">S1</div>
+          <div class="name">Incident Detection</div>
+          <div class="type">Coded Agent</div>
+        </div>
+        <div class="arrow">→</div>
+        <div class="stage-box active">
+          <div class="num">S2</div>
+          <div class="name">AI Triage</div>
+          <div class="type">llama-3.3-70b</div>
+        </div>
+        <div class="arrow">→</div>
+        <div class="stage-box">
+          <div class="num">S3</div>
+          <div class="name">Cost Impact</div>
+          <div class="type">API Workflow</div>
+        </div>
+        <div class="arrow">→</div>
+        <div class="stage-box">
+          <div class="num">S4</div>
+          <div class="name">Human Approval</div>
+          <div class="type">UiPath Apps</div>
+        </div>
+        <div class="arrow">→</div>
+        <div class="stage-box">
+          <div class="num">S5</div>
+          <div class="name">Remediation</div>
+          <div class="type">ArgoCD + kubectl</div>
+        </div>
+        <div class="arrow">→</div>
+        <div class="stage-box">
+          <div class="num">S6</div>
+          <div class="name">Sign-Off</div>
+          <div class="type">UiPath Apps</div>
+        </div>
+        <div class="arrow">→</div>
+        <div class="stage-box">
+          <div class="num">S7</div>
+          <div class="name">Post-Mortem</div>
+          <div class="type">Doc Understanding</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat">
+        <div class="num">7</div>
+        <div class="label">Maestro Stages</div>
+      </div>
+      <div class="stat">
+        <div class="num">5</div>
+        <div class="label">Incident Types</div>
+      </div>
+      <div class="stat">
+        <div class="num">17</div>
+        <div class="label">Tests Passing</div>
+      </div>
+      <div class="stat">
+        <div class="num">&lt;15m</div>
+        <div class="label">Full Resolution</div>
+      </div>
+    </div>
+
+    <div class="incidents">
+      <div class="heading">Incident Coverage</div>
+      <div class="incident-tags">
+        <div class="tag orange">OOMKill</div>
+        <div class="tag orange">CrashLoopBackOff</div>
+        <div class="tag orange">Policy Violation</div>
+        <div class="tag orange">Cost Spike</div>
+        <div class="tag orange">Deployment Failure</div>
+      </div>
+    </div>
+
+    <div class="hackathon-badge">UiPath AgentHack 2026 · June 30 Deadline</div>
+  </div>
+
+</section>
+</body>
+</html>

@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8"/>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { width: 1920px; height: 1080px; overflow: hidden; font-family: 'Inter', 'Segoe UI', sans-serif; }
+.slide {
+  width: 1920px; height: 1080px; overflow: hidden; position: relative;
+  background: #0a0e1a;
+}
+.top-bar {
+  position: absolute; top: 0; left: 0; width: 1920px; height: 8px;
+  background: linear-gradient(90deg, #FA4616 0%, #ff6b3d 50%, #FA4616 100%);
+}
+.slide-num {
+  position: absolute; top: 40px; right: 80px;
+  font-size: 18px; color: rgba(255,255,255,0.25); font-weight: 500;
+}
+.slide-label {
+  position: absolute; top: 40px; left: 80px;
+  font-size: 16px; color: #FA4616; font-weight: 600; letter-spacing: 3px; text-transform: uppercase;
+}
+
+/* Slide title */
+.title {
+  position: absolute; top: 90px; left: 80px;
+  font-size: 54px; font-weight: 800; color: #ffffff; letter-spacing: -1px;
+}
+.title span { color: #FA4616; }
+
+.subtitle {
+  position: absolute; top: 165px; left: 80px;
+  font-size: 24px; color: #8892b0; font-weight: 400;
+}
+
+/* Problem statement */
+.problem-box {
+  position: absolute; top: 240px; left: 80px; width: 700px;
+  background: rgba(250,70,22,0.07);
+  border: 1px solid rgba(250,70,22,0.25);
+  border-radius: 12px;
+  padding: 40px 40px;
+}
+.problem-box .pb-title {
+  font-size: 20px; color: #FA4616; font-weight: 700;
+  letter-spacing: 1px; text-transform: uppercase; margin-bottom: 24px;
+}
+.problem-item {
+  display: flex; align-items: flex-start; gap: 16px; margin-bottom: 20px;
+}
+.problem-item .icon { font-size: 22px; margin-top: 2px; flex-shrink: 0; }
+.problem-item .text { font-size: 20px; color: #ccd6f6; line-height: 1.5; }
+.problem-item .text strong { color: #ffffff; font-weight: 700; }
+
+/* Before/After metric */
+.metrics {
+  position: absolute; top: 240px; left: 840px; width: 980px;
+}
+.metrics-title {
+  font-size: 20px; color: #8892b0; font-weight: 500;
+  letter-spacing: 2px; text-transform: uppercase; margin-bottom: 30px;
+}
+.metric-row {
+  display: flex; gap: 30px; margin-bottom: 24px; align-items: center;
+}
+.before-box {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 10px;
+  padding: 20px 28px;
+  flex: 1;
+}
+.after-box {
+  background: rgba(250,70,22,0.08);
+  border: 1px solid rgba(250,70,22,0.3);
+  border-radius: 10px;
+  padding: 20px 28px;
+  flex: 1;
+}
+.box-label { font-size: 13px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
+.before-box .box-label { color: #8892b0; }
+.after-box .box-label { color: #FA4616; }
+.box-value { font-size: 28px; font-weight: 800; color: #ffffff; }
+.before-box .box-value { color: #8892b0; }
+.after-box .box-value { color: #FA4616; }
+.box-desc { font-size: 16px; color: #8892b0; margin-top: 6px; }
+
+.vs-arrow { font-size: 28px; color: rgba(250,70,22,0.5); flex-shrink: 0; }
+
+/* Bottom quote */
+.quote-bar {
+  position: absolute; bottom: 70px; left: 80px; right: 80px;
+  border-left: 4px solid #FA4616;
+  padding-left: 30px;
+}
+.quote-text { font-size: 26px; color: #ccd6f6; font-style: italic; font-weight: 400; line-height: 1.5; }
+</style>
+</head>
+<body>
+<section class="slide" style="width:1920px;height:1080px;overflow:hidden;position:relative;">
+  <div class="top-bar"></div>
+  <div class="slide-num">02 / 08</div>
+  <div class="slide-label">The Problem</div>
+
+  <div class="title">3 AM. Your Cluster<br/>is on <span>Fire.</span></div>
+  <div class="subtitle">What every platform team faces — and what NeuroScale Ops eliminates</div>
+
+  <div class="problem-box">
+    <div class="pb-title">Manual Incident Response Today</div>
+    <div class="problem-item">
+      <div class="icon">📟</div>
+      <div class="text"><strong>100+ Prometheus alerts</strong> fire simultaneously during an OOMKill cascade</div>
+    </div>
+    <div class="problem-item">
+      <div class="icon">📖</div>
+      <div class="text">Engineer reads a <strong>40-page runbook</strong> at 3 AM to find the right kubectl command</div>
+    </div>
+    <div class="problem-item">
+      <div class="icon">📲</div>
+      <div class="text">Wake someone to <strong>approve the fix</strong> — who is asleep in a different timezone</div>
+    </div>
+    <div class="problem-item">
+      <div class="icon">📝</div>
+      <div class="text">Write the <strong>post-mortem at 6 AM</strong> from memory, exhausted, missing details</div>
+    </div>
+    <div class="problem-item">
+      <div class="icon">💸</div>
+      <div class="text">No visibility on <strong>financial impact</strong> — cost of downtime calculated days later</div>
+    </div>
+  </div>
+
+  <div class="metrics">
+    <div class="metrics-title">Before vs. After NeuroScale Ops</div>
+
+    <div class="metric-row">
+      <div class="before-box">
+        <div class="box-label">Before</div>
+        <div class="box-value">45–120 min</div>
+        <div class="box-desc">Mean time to resolution (MTTR)</div>
+      </div>
+      <div class="vs-arrow">→</div>
+      <div class="after-box">
+        <div class="box-label">After</div>
+        <div class="box-value">&lt; 15 min</div>
+        <div class="box-desc">Automated detection to resolution</div>
+      </div>
+    </div>
+
+    <div class="metric-row">
+      <div class="before-box">
+        <div class="box-label">Before</div>
+        <div class="box-value">3–5 engineers</div>
+        <div class="box-desc">Required on-call for incident handling</div>
+      </div>
+      <div class="vs-arrow">→</div>
+      <div class="after-box">
+        <div class="box-label">After</div>
+        <div class="box-value">1 approval click</div>
+        <div class="box-desc">Human-in-the-loop gate — nothing else needed</div>
+      </div>
+    </div>
+
+    <div class="metric-row">
+      <div class="before-box">
+        <div class="box-label">Before</div>
+        <div class="box-value">0%</div>
+        <div class="box-desc">Automated audit trail</div>
+      </div>
+      <div class="vs-arrow">→</div>
+      <div class="after-box">
+        <div class="box-label">After</div>
+        <div class="box-value">100%</div>
+        <div class="box-desc">Every stage logged with user + timestamp</div>
+      </div>
+    </div>
+
+    <div class="metric-row">
+      <div class="before-box">
+        <div class="box-label">Before</div>
+        <div class="box-value">Manual</div>
+        <div class="box-desc">Post-mortem written by exhausted engineers</div>
+      </div>
+      <div class="vs-arrow">→</div>
+      <div class="after-box">
+        <div class="box-label">After</div>
+        <div class="box-value">Auto-generated</div>
+        <div class="box-desc">Document Understanding PDF on every incident</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="quote-bar">
+    <div class="quote-text">"Without Maestro, this is just a collection of scripts. Maestro is what makes it enterprise-grade."</div>
+  </div>
+</section>
+</body>
+</html>

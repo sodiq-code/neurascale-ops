@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8"/>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { width: 1920px; height: 1080px; overflow: hidden; font-family: 'Inter', 'Segoe UI', sans-serif; }
+.slide {
+  width: 1920px; height: 1080px; overflow: hidden; position: relative;
+  background: #0a0e1a;
+}
+.top-bar {
+  position: absolute; top: 0; left: 0; width: 1920px; height: 8px;
+  background: linear-gradient(90deg, #FA4616 0%, #ff6b3d 50%, #FA4616 100%);
+}
+.slide-num { position: absolute; top: 40px; right: 80px; font-size: 18px; color: rgba(255,255,255,0.25); font-weight: 500; }
+.slide-label { position: absolute; top: 40px; left: 80px; font-size: 16px; color: #FA4616; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; }
+.title { position: absolute; top: 90px; left: 80px; font-size: 52px; font-weight: 800; color: #ffffff; letter-spacing: -1px; }
+.title span { color: #FA4616; }
+.subtitle { position: absolute; top: 165px; left: 80px; font-size: 24px; color: #8892b0; }
+
+/* Architecture image */
+.arch-image {
+  position: absolute; top: 220px; left: 80px; width: 760px; height: 780px;
+  object-fit: contain; object-position: top left;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+/* Right: component breakdown */
+.components {
+  position: absolute; top: 220px; left: 900px; width: 960px;
+}
+.comp-title {
+  font-size: 20px; color: #8892b0; font-weight: 500;
+  letter-spacing: 2px; text-transform: uppercase; margin-bottom: 30px;
+}
+
+.comp-item {
+  display: flex; align-items: flex-start; gap: 24px; margin-bottom: 24px;
+  padding: 20px 24px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 10px;
+  border-left: 3px solid rgba(250,70,22,0.4);
+}
+.comp-icon {
+  font-size: 28px; flex-shrink: 0; margin-top: 2px;
+}
+.comp-text .name { font-size: 20px; color: #ffffff; font-weight: 700; margin-bottom: 6px; }
+.comp-text .desc { font-size: 16px; color: #8892b0; line-height: 1.5; }
+.comp-text .tag { 
+  display: inline-block; margin-top: 8px;
+  background: rgba(250,70,22,0.15); border: 1px solid rgba(250,70,22,0.3);
+  color: #FA4616; font-size: 13px; font-weight: 600; padding: 3px 12px; border-radius: 4px;
+}
+</style>
+</head>
+<body>
+<section class="slide" style="width:1920px;height:1080px;overflow:hidden;position:relative;">
+  <div class="top-bar"></div>
+  <div class="slide-num">03 / 08</div>
+  <div class="slide-label">Architecture</div>
+
+  <div class="title">How <span>NeuroScale Ops</span><br/>Works End-to-End</div>
+  <div class="subtitle">7 stages. 5 agents. Full automation with human oversight.</div>
+
+  <img src="assets/architecture.png" class="arch-image" alt="Architecture"/>
+
+  <div class="components">
+    <div class="comp-title">UiPath Component Mapping</div>
+
+    <div class="comp-item">
+      <div class="comp-icon">🔍</div>
+      <div class="comp-text">
+        <div class="name">Stages 1–2: Detect + AI Triage</div>
+        <div class="desc">Python Coded Agent monitors Prometheus alerts. Groq llama-3.3-70b-versatile performs root cause analysis with structured JSON output and rule-based fallback.</div>
+        <div class="tag">Coded Agent + API Workflow</div>
+      </div>
+    </div>
+
+    <div class="comp-item">
+      <div class="comp-icon">💰</div>
+      <div class="comp-text">
+        <div class="name">Stage 3: Cost Impact Analysis</div>
+        <div class="desc">OpenCost API Workflow calculates namespace-level spend, remediation cost delta, and budget utilization before any human sees the request.</div>
+        <div class="tag">UiPath Integration Service</div>
+      </div>
+    </div>
+
+    <div class="comp-item">
+      <div class="comp-icon">👤</div>
+      <div class="comp-text">
+        <div class="name">Stages 4 + 6: Human-in-the-Loop</div>
+        <div class="desc">UiPath Apps forms surface AI reasoning + cost data to the SRE. One-click approval gates with 15-minute SLA escalation and full role-based assignment.</div>
+        <div class="tag">UiPath Apps + Maestro HITL</div>
+      </div>
+    </div>
+
+    <div class="comp-item">
+      <div class="comp-icon">⚡</div>
+      <div class="comp-text">
+        <div class="name">Stage 5: Autonomous Remediation</div>
+        <div class="desc">ArgoCD rollback, kubectl patch, scale-down, or Kyverno exception — circuit breaker prevents runaway loops. Zero manual kubectl required.</div>
+        <div class="tag">Coded Agent + ArgoCD API</div>
+      </div>
+    </div>
+
+    <div class="comp-item">
+      <div class="comp-icon">📄</div>
+      <div class="comp-text">
+        <div class="name">Stage 7: Post-Mortem Generation</div>
+        <div class="desc">Document Understanding auto-generates a structured post-mortem PDF with timeline, root cause, cost impact, and runbook update recommendations.</div>
+        <div class="tag">Document Understanding</div>
+      </div>
+    </div>
+  </div>
+</section>
+</body>
+</html>

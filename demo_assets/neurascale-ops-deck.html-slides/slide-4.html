@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8"/>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { width: 1920px; height: 1080px; overflow: hidden; font-family: 'Inter', 'Segoe UI', sans-serif; }
+.slide {
+  width: 1920px; height: 1080px; overflow: hidden; position: relative;
+  background: #0a0e1a;
+}
+.top-bar { position: absolute; top: 0; left: 0; width: 1920px; height: 8px; background: linear-gradient(90deg, #FA4616 0%, #ff6b3d 50%, #FA4616 100%); }
+.slide-num { position: absolute; top: 40px; right: 80px; font-size: 18px; color: rgba(255,255,255,0.25); font-weight: 500; }
+.slide-label { position: absolute; top: 40px; left: 80px; font-size: 16px; color: #FA4616; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; }
+.title { position: absolute; top: 90px; left: 80px; font-size: 52px; font-weight: 800; color: #ffffff; letter-spacing: -1px; }
+.title span { color: #FA4616; }
+.subtitle { position: absolute; top: 165px; left: 80px; font-size: 24px; color: #8892b0; }
+
+/* Left: pipeline screenshot */
+.pipeline-img {
+  position: absolute; top: 220px; left: 80px; width: 880px; height: 760px;
+  object-fit: cover; object-position: top;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+/* Right: AI output breakdown */
+.ai-panel {
+  position: absolute; top: 220px; left: 1020px; width: 840px;
+}
+.ai-title { font-size: 20px; color: #8892b0; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 24px; }
+
+/* JSON output box */
+.json-box {
+  background: #0d1226;
+  border: 1px solid rgba(250,70,22,0.2);
+  border-radius: 10px;
+  padding: 28px 32px;
+  font-family: 'Courier New', monospace;
+  font-size: 16px;
+  color: #8892b0;
+  line-height: 1.8;
+  margin-bottom: 28px;
+}
+.json-box .key { color: #569cd6; }
+.json-box .str { color: #ce9178; }
+.json-box .num { color: #b5cea8; }
+.json-box .highlight { color: #FA4616; font-weight: 700; }
+.json-box .comment { color: rgba(255,255,255,0.3); font-style: italic; }
+
+/* Feature points */
+.feature-row {
+  display: flex; gap: 20px; margin-bottom: 20px;
+}
+.feature-box {
+  flex: 1;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px;
+  padding: 20px 20px;
+  border-top: 3px solid #FA4616;
+}
+.feature-box .fb-title { font-size: 17px; color: #ffffff; font-weight: 700; margin-bottom: 8px; }
+.feature-box .fb-desc { font-size: 15px; color: #8892b0; line-height: 1.5; }
+
+/* Model badge */
+.model-badge {
+  display: flex; gap: 16px; align-items: center; margin-bottom: 28px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 10px;
+  padding: 16px 24px;
+}
+.model-badge img { height: 40px; object-fit: contain; }
+.model-badge .model-info .model-name { font-size: 20px; color: #ffffff; font-weight: 700; }
+.model-badge .model-info .model-sub { font-size: 15px; color: #8892b0; margin-top: 4px; }
+</style>
+</head>
+<body>
+<section class="slide" style="width:1920px;height:1080px;overflow:hidden;position:relative;">
+  <div class="top-bar"></div>
+  <div class="slide-num">04 / 08</div>
+  <div class="slide-label">Live Demo</div>
+
+  <div class="title">AI Triage in <span>Action</span></div>
+  <div class="subtitle">Real Groq inference — structured JSON output — sub-second response</div>
+
+  <img src="assets/pipeline_run.png" class="pipeline-img" alt="Pipeline Run"/>
+
+  <div class="ai-panel">
+    <div class="ai-title">Triage Agent Output</div>
+
+    <div class="model-badge">
+      <img src="assets/groq_logo.png" alt="Groq"/>
+      <div class="model-info">
+        <div class="model-name">llama-3.3-70b-versatile</div>
+        <div class="model-sub">via Groq API · response_format: json_object</div>
+      </div>
+    </div>
+
+    <div class="json-box">
+<span class="comment">// Triage Agent output for OOMKill incident</span><br/>
+{<br/>
+&nbsp;&nbsp;<span class="key">"incident_type"</span>: <span class="str">"OOMKill"</span>,<br/>
+&nbsp;&nbsp;<span class="key">"root_cause"</span>: <span class="str">"Memory limit 512Mi exceeded by llm-inference pod during batch request spike"</span>,<br/>
+&nbsp;&nbsp;<span class="key">"confidence"</span>: <span class="highlight">0.94</span>,<br/>
+&nbsp;&nbsp;<span class="key">"severity"</span>: <span class="str">"CRITICAL"</span>,<br/>
+&nbsp;&nbsp;<span class="key">"recommended_action"</span>: <span class="str">"increase_memory_limit"</span>,<br/>
+&nbsp;&nbsp;<span class="key">"runbook_match"</span>: <span class="str">"oomkill-increase-memory"</span>,<br/>
+&nbsp;&nbsp;<span class="key">"requires_approval"</span>: <span class="num">true</span>,<br/>
+&nbsp;&nbsp;<span class="key">"estimated_resolution_min"</span>: <span class="num">3</span><br/>
+}
+    </div>
+
+    <div class="feature-row">
+      <div class="feature-box">
+        <div class="fb-title">Rule-Based Fallback</div>
+        <div class="fb-desc">If Groq unavailable, pattern-matching triage fires automatically. System never goes down.</div>
+      </div>
+      <div class="feature-box">
+        <div class="fb-title">9 Runbook Library</div>
+        <div class="fb-desc">OOMKill, CrashLoop, PolicyViolation, CostSpike, DeploymentFailure — all matched automatically.</div>
+      </div>
+    </div>
+
+    <div class="feature-row">
+      <div class="feature-box">
+        <div class="fb-title">Demo Mode</div>
+        <div class="fb-desc">DEMO_MODE=true runs the full pipeline without a real K8s cluster — judges can reproduce.</div>
+      </div>
+      <div class="feature-box">
+        <div class="fb-title">94% Confidence</div>
+        <div class="fb-desc">High confidence triggers direct Maestro routing to remediation. Low confidence escalates to human.</div>
+      </div>
+    </div>
+  </div>
+</section>
+</body>
+</html>
