@@ -10,7 +10,7 @@
 [![17/17 Tests Passing](https://img.shields.io/badge/Tests-17%2F17%20Passing-brightgreen?style=for-the-badge&logo=pytest)](tests/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
 
-> **Demo Video (4m 37s) →** [`demo_assets/neurascale_ops_demo_FINAL_v3.mp4`](demo_assets/neurascale_ops_demo_FINAL_v3.mp4)
+> **Demo Video (4m 30s) →** [Watch on YouTube](https://youtu.be/lj3-BRPFZc0) | [`demo_assets/neurascale_ops_demo_FINAL_v3.mp4`](demo_assets/neurascale_ops_demo_FINAL_v3.mp4)
 
 ---
 
