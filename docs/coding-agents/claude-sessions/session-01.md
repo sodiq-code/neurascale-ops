@@ -86,12 +86,12 @@ Build a production-grade UiPath Maestro-orchestrated Kubernetes incident respons
 
 ### 1. Dual-Mode Architecture (DEMO_MODE / Real Mode)
 **Decision:** All agents support `DEMO_MODE=true` (env var) which bypasses real K8s API calls and Groq calls.  
-**Reason:** Hackathon judges need to run the system without a real cluster. Demos must be zero-friction.  
+**Reason:** Hackathon evaluators need to run the system without a real cluster. Demos must be zero-friction.  
 **Implementation:** Every agent checks `os.environ.get("DEMO_MODE", "false").lower() == "true"` at the top of each method that would make external calls.
 
 ### 2. llama-3.3-70b-versatile with Rule-Based Fallback
 **Decision:** Use Groq llama-3.3-70b-versatile for AI triage, but fall back to rule-based logic when no API key is present.  
-**Reason:** Hackathon judges may not have Groq keys. The system must always produce output.  
+**Reason:** Hackathon evaluators may not have Groq keys. The system must always produce output.  
 **Implementation:** `TriageAgent._gpt_triage()` catches all exceptions and calls `_rule_based_triage()` as fallback.
 
 ### 3. TriageReport Carries Alert Context
@@ -101,7 +101,7 @@ Build a production-grade UiPath Maestro-orchestrated Kubernetes incident respons
 
 ### 4. 7-Stage Maestro Case (not 5)
 **Decision:** Added dedicated Cost Impact stage (Stage 3) and Post-Mortem stage (Stage 7) on top of the obvious 5.  
-**Reason:** Cost Impact is a first-class metric for FinOps-aware orgs. Post-Mortem closes the loop and enables runbook improvement. Both stages demonstrate Maestro's orchestration depth to judges.
+**Reason:** Cost Impact is a first-class metric for FinOps-aware orgs. Post-Mortem closes the loop and enables runbook improvement. Both stages demonstrate Maestro's orchestration depth to evaluators.
 
 ### 5. OpenCost Integration over Custom Cost Calculation
 **Decision:** Query OpenCost API for real cost data rather than calculating from resource metrics.  
@@ -160,7 +160,7 @@ All source files were reviewed at `/home/user/neurascale-source/` and key patter
 - Real Kubernetes workload — not a toy demo
 - OpenCost integration shows FinOps awareness (rare in K8s incident response)
 - Kyverno policy enforcement loop (detect policy violation → create exception → re-validate)
-- Dual-mode (DEMO/Real) means judges can actually run it
+- Dual-mode (DEMO/Real) means evaluators can actually run it
 - 9 runbooks covering the full incident taxonomy
 
 ---

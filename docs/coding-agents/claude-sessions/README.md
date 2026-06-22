@@ -39,7 +39,7 @@ Claude produced **~2,000 lines of production-grade code** covering:
 
 ### Architectural Decisions Made by Claude
 
-1. **Dual-mode architecture** — `DEMO_MODE=true` bypasses all external dependencies so judges can run without a real K8s cluster or API keys
+1. **Dual-mode architecture** — `DEMO_MODE=true` bypasses all external dependencies so users can run without a real K8s cluster or API keys
 2. **7-stage Maestro Case** — Claude recommended adding dedicated Cost Impact and Post-Mortem stages on top of the obvious 5, which deepens the orchestration story
 3. **llama-3.3-70b-versatile with rule-based fallback** — If Groq is unavailable, every agent degrades gracefully rather than crashing
 4. **TriageReport carries Alert context** — Avoided prop-drilling by embedding `namespace` and `raw_data` directly into TriageReport dataclass

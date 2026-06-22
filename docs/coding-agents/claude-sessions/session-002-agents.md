@@ -60,7 +60,7 @@ def _kubectl(cmd):
     # Real kubectl call
 ```
 
-This means judges can run the full demo without a K8s cluster or API keys.
+This means evaluators can run the full demo without a K8s cluster or API keys.
 
 ### Error Handling Strategy
 
