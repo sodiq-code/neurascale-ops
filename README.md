@@ -203,26 +203,117 @@ The Remediation Agent has a built-in **confidence gate**: if Groq's confidence s
 
 ---
 
-## Quick Start
+## Agent Type
+
+This solution uses **Coded Agents** (Python 3.11+) — not Low-code / drag-and-drop.
+
+Each of the five agents (`DetectorAgent`, `TriageAgent`, `CostImpactAgent`, `RemediationAgent`, `NotificationAgent`) is a standalone Python class wired into a UiPath Maestro Case stage. The agents are invoked by Maestro at runtime; all business logic is in Python, not in a visual workflow designer.
+
+| Agent | File | Stage |
+|---|---|---|
+| DetectorAgent | `agents/detector_agent.py` | Stage 1 — Incident Detection |
+| TriageAgent | `agents/triage_agent.py` | Stage 2 — AI Triage (Groq) |
+| CostImpactAgent | `agents/cost_impact_agent.py` | Stage 3 — Cost Impact Analysis |
+| RemediationAgent | `agents/remediation_agent.py` | Stage 5 — Execute Remediation |
+| NotificationAgent | `agents/notification_agent.py` | Stage 7 — Post-Mortem |
+
+---
+
+## Setup Instructions
+
+### Prerequisites
+
+| Requirement | Version | Notes |
+|---|---|---|
+| Python | 3.11+ | `python --version` to verify |
+| pip | 23+ | bundled with Python 3.11 |
+| Git | any | for cloning |
+| Groq API Key | — | [console.groq.com](https://console.groq.com) — free tier is enough |
+| UiPath Automation Cloud | — | [cloud.uipath.com](https://cloud.uipath.com) — free Community plan |
+
+> **No Kubernetes cluster required.** `DEMO_MODE=true` simulates all K8s API calls locally. The full pipeline runs offline except for the Groq LLM call.
+
+---
+
+### Step 1 — Clone the repo
 
 ```bash
 git clone https://github.com/sodiq-code/neurascale-ops
 cd neurascale-ops
+```
+
+---
+
+### Step 2 — Install dependencies
+
+```bash
 pip install -r requirements.txt
+```
 
-# Set env vars
-export GROQ_API_KEY=your_groq_key
+Key packages installed: `groq`, `structlog`, `pydantic`, `httpx`, `pytest`.
+
+---
+
+### Step 3 — Configure environment variables
+
+Create a `.env` file (or export directly):
+
+```bash
+cp .env.example .env   # if the example file exists, else create manually
+```
+
+| Variable | Required | Default | Description |
+|---|---|---|---|
+| `GROQ_API_KEY` | ✅ Yes | — | Your Groq API key from [console.groq.com](https://console.groq.com) |
+| `DEMO_MODE` | No | `false` | Set `true` to simulate K8s/ArgoCD calls without a real cluster |
+| `OPENCOST_URL` | No | `http://localhost:9003` | OpenCost API base URL (only needed in live mode) |
+| `SLACK_WEBHOOK_URL` | No | — | Slack incoming webhook for notifications |
+| `UIPATH_TENANT` | No | `DefaultTenant` | UiPath Automation Cloud tenant name |
+
+**Minimum setup (demo mode):**
+
+```bash
+export GROQ_API_KEY=gsk_xxxxxxxxxxxx
 export DEMO_MODE=true
+```
 
-# Run single incident
+---
+
+### Step 4 — Run a single incident scenario
+
+```bash
 python main.py --scenario oomkill
+```
 
-# Run all 5 scenarios
+Available scenarios: `oomkill`, `crashloop`, `policy`, `cost`, `deploy`, `all`
+
+```bash
+# Run all 5 scenarios in one pass
 python main.py --scenario all
+```
 
-# Run tests
+---
+
+### Step 5 — Run the test suite
+
+```bash
 python -m pytest tests/test_pipeline.py -v
 ```
+
+Expected output: **17/17 tests passing** in under 2 seconds.
+
+---
+
+### Step 6 — Import the Maestro Case into UiPath
+
+1. Log in to [cloud.uipath.com](https://cloud.uipath.com) → open your tenant
+2. Navigate to **Maestro → Cases**
+3. Click **New Case → Import from JSON**
+4. Upload [`uipath/maestro_case/case_definition.json`](uipath/maestro_case/case_definition.json)
+5. The 7-stage case plan will be imported with all stage definitions, SLAs, and escalation rules
+6. Click **Publish** → the case is ready to trigger
+
+> The published v1.0.0 case on `DefaultTenant` (Sodiq Jimoh's account) is already live — the import step is only needed if you want to run it on your own tenant.
 
 ---
 
